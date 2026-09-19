@@ -65,6 +65,45 @@ const login = async (req: Request, res: Response) => {
     }
 }
 
+const verifyMe = async (req: AuthRequest, res: Response) => {
+    try {
+        const userId = req.userId;
+        const role = req.role;
+
+        if (!userId || !role) {
+            return res.status(500).json({ success: false, message: "User details not found" });
+        }
+
+        const user = await UserModel.findById(userId);
+
+        if (!user) {
+            return res.status(500).json({ success: false, message: "User not found" });
+        }
+
+        let platformDetails;
+
+        if (role === "Ambassador") {
+            platformDetails = await AmbassadorModel.findOne({ userId });
+        } else {
+            platformDetails = await AdminModel.findOne({ userId });
+        }
+
+        if (!platformDetails) {
+            return res.status(500).json({ success: false, message: "Details not found" });
+        }
+
+        if (role === "Ambassador") {
+            return res.status(200).json({ success: true, user, ambassador: platformDetails, message: "Ambassador verified" });
+        } else {
+            return res.status(200).json({ success: true, user, admin: platformDetails, message: "Admin verified" });
+        }
+    } catch(error: unknown) {
+        console.log(error);
+
+        return res.status(500).json({ success: false, message: "Internal Server Error" });
+    }
+}
+
 const setPassword = async (req: AuthRequest, res: Response) => {
     try {
         const { currentPassword, newPassword } = req.body;
@@ -152,4 +191,4 @@ const changePassword = async (req: AuthRequest, res: Response) => {
     }
 }
 
-export { login, setPassword, logout, changePassword }
+export { login, setPassword, logout, changePassword, verifyMe }

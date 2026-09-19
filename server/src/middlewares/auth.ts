@@ -17,7 +17,6 @@ export const authMiddleware = async (req: AuthRequest, res: Response, next: Next
         const token = req.cookies?.token;
 
         if (!token) {
-            console.log("Block 1");
             return res.status(400).json({ success: false, message: "Something went wrong" });
         }
 
