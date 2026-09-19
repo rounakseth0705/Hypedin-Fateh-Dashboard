@@ -1,16 +1,48 @@
 services:
-  client:
-    build:
-      context: ./client
-      dockerfile: Dockerfile
-    ports:
-      - "3001:80"
-    depends_on:
-      - server
-
-  server:
+  backend:
+    container_name: hypedin-fateh_backend
     build:
       context: ./server
       dockerfile: Dockerfile
-    ports:
-      - "5001:7000"
+    environment:
+      FRONTEND_URL: ${FRONTEND_URL}
+      PORT: ${PORT}
+      MONGO_URI: ${MONGO_URI}
+      GOOGLE_DRIVE_FOLDER_ID: ${GOOGLE_DRIVE_FOLDER_ID}
+      NODE_ENV: ${NODE_ENV}
+      JWT_SECRET: ${JWT_SECRET}
+      GOOGLE_REFRESH_TOKEN: ${GOOGLE_REFRESH_TOKEN}
+      GOOGLE_CIENT_ID: ${GOOGLE_CLINET_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      GOOGLE_REDIRECT_URI: ${GOOGLE_REDIRECT_URI}
+    restart: unless-stopped
+    networks:
+      - hypedin-fateh_network
+    deploy:
+      resources:
+        limits:
+          memory: 2GB
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+  
+  frontend:
+    container_name: hypedin-fateh_frontend
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    environment:
+      VITE_BACKEND_URL: ${VITE_BACKEND_URL}
+    restart: unless-stopped
+    networks:
+      - hypedin-fateh_network
+    deploy:
+      resources:
+        limits:
+          memory: 1GB
+
+networks:
+  hypedin-fateh_network:
+    driver: bridge
