@@ -1164,7 +1164,7 @@ export default function AmbassadorDashboard() {
     setIsSubmittingPassword(true);
 
     try {
-      const response = await API.post("/auth/setPassword", {
+      const response = await API.put("/auth/setPassword", {
         currentPassword,
         newPassword
       });
