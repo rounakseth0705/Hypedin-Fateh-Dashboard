@@ -251,7 +251,6 @@
 // }
 
 // // --- Task Details Modal ---
-// // --- Task Details Modal ---
 // function TaskDetailsModal({ task, onClose, onSubmitClick }) {
 //   if (!task) return null;
 
@@ -283,69 +282,67 @@
 //               <span className="text-[11px] uppercase tracking-wider font-bold bg-[#e8f0fe] text-[#1a73e8] px-2.5 py-0.5 rounded-md">
 //                 {task.periodicity || "Task"}
 //               </span>
-//               {/* <span className="text-xs font-semibold text-[#5f6368]">
-//                 Phase {task.taskMonth} • Week {task.taskWeek}
-//               </span> */}
 //             </div>
 //             <h3 className="text-xl font-bold text-[#202124]">{task.title}</h3>
 //           </div>
 
-//           {/* Description */}
+//           {/* Description with whitespace-pre-line to respect newline characters (\n) */}
 //           {task.description && (
 //             <div className="space-y-1">
 //               <label className="text-xs font-bold text-[#5f6368] uppercase flex items-center gap-1">
 //                 <FileText className="w-3.5 h-3.5" /> Description
 //               </label>
-//               <p className="text-sm text-[#202124] leading-relaxed bg-[#f8f9fa] p-3.5 rounded-xl border border-[#dadce0]">
+//               <p className="text-sm text-[#202124] leading-relaxed bg-[#f8f9fa] p-3.5 rounded-xl border border-[#dadce0] whitespace-pre-wrap">
 //                 {task.description}
 //               </p>
 //             </div>
 //           )}
 
-//           {/* Activity */}
+//           {/* Activity with whitespace-pre-line */}
 //           <div className="space-y-1">
 //             <label className="text-xs font-bold text-[#5f6368] uppercase">HOW TO SUBMIT</label>
-//             <p className="text-sm text-[#3c4043] leading-relaxed">
+//             <p className="text-sm text-[#3c4043] leading-relaxed whitespace-pre-wrap">
 //               {task.activity || "N/A"}
 //             </p>
 //           </div>
 
+//           {/* Things to Avoid with whitespace-pre-line */}
 //           <div className="space-y-1">
 //             <label className="text-xs font-bold text-[#5f6368] uppercase">THINGS TO AVOID</label>
-//             <p className="text-sm text-[#3c4043] leading-relaxed">
+//             <p className="text-sm text-[#3c4043] leading-relaxed whitespace-pre-wrap">
 //               {task.thingsToAvoid || "N/A"}
 //             </p>
 //           </div>
 
-//           {/* Target */}
+//           {/* Target with whitespace-pre-line */}
 //           {task.target && (
 //             <div className="space-y-1">
 //               <label className="text-xs font-bold text-[#5f6368] uppercase flex items-center gap-1">
 //                 <Target className="w-3.5 h-3.5" /> Target
 //               </label>
-//               <p className="text-sm text-[#3c4043] bg-amber-50 text-amber-900 border border-amber-200 p-3 rounded-xl">
+//               <p className="text-sm text-[#3c4043] bg-amber-50 text-amber-900 border border-amber-200 p-3 rounded-xl whitespace-pre-wrap">
 //                 {task.target}
 //               </p>
 //             </div>
 //           )}
 
-//           {/* Allowed Submissions (Full Width Centered Layout) */}
+//           {/* Allowed Submissions */}
 //           <div className="pt-2 border-t border-[#dadce0]">
-//             { task.isImageAllowed || task.isVideoAllowed &&
-//             <div className="p-3 bg-[#f8f9fa] rounded-xl border border-[#dadce0] flex flex-col items-center justify-center gap-1.5">
-//               <p className="text-[11px] font-bold text-[#5f6368] uppercase">Allowed Formats</p>
-//               <div className="flex items-center gap-6 text-xs font-medium text-[#202124]">
-//                 <span className="flex items-center gap-1.5">
-//                   {task.isImageAllowed ? <CheckCircle2 className="w-4 h-4 text-emerald-600" /> : <XCircle className="w-4 h-4 text-gray-400" />}
-//                   Image
-//                 </span>
-//                 <span className="flex items-center gap-1.5">
-//                   {task.isVideoAllowed ? <CheckCircle2 className="w-4 h-4 text-emerald-600" /> : <XCircle className="w-4 h-4 text-gray-400" />}
-//                   Video
-//                 </span>
+//             {(task.isImageAllowed || task.isVideoAllowed) && (
+//               <div className="p-3 bg-[#f8f9fa] rounded-xl border border-[#dadce0] flex flex-col items-center justify-center gap-1.5">
+//                 <p className="text-[11px] font-bold text-[#5f6368] uppercase">Allowed Formats</p>
+//                 <div className="flex items-center gap-6 text-xs font-medium text-[#202124]">
+//                   <span className="flex items-center gap-1.5">
+//                     {task.isImageAllowed ? <CheckCircle2 className="w-4 h-4 text-emerald-600" /> : <XCircle className="w-4 h-4 text-gray-400" />}
+//                     Image
+//                   </span>
+//                   <span className="flex items-center gap-1.5">
+//                     {task.isVideoAllowed ? <CheckCircle2 className="w-4 h-4 text-emerald-600" /> : <XCircle className="w-4 h-4 text-gray-400" />}
+//                     Video
+//                   </span>
+//                 </div>
 //               </div>
-//             </div>
-//             }
+//             )}
 //           </div>
 //         </div>
 
@@ -372,7 +369,6 @@
 //   );
 // }
 
-// // --- Main AmbassadorTasks Component ---
 // // --- Main AmbassadorTasks Component ---
 // export default function AmbassadorTasks() {
 //   const [tasks, setTasks] = useState([]);
@@ -507,7 +503,7 @@
 //                         onClick={() => setSelectedTask(task)}
 //                         className="p-6 sm:p-8 hover:bg-[#f8f9fa] cursor-pointer transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:gap-6 overflow-hidden"
 //                       >
-//                         {/* Text Container with min-w-0 to allow text truncation and prevent flex expansion */}
+//                         {/* Text Container */}
 //                         <div className="flex-1 min-w-0 pr-2">
 //                           <div className="mb-2">
 //                             <span className="text-[11px] uppercase tracking-wider font-bold bg-[#e8f0fe] text-[#1a73e8] px-3 py-1 rounded-md">
@@ -516,13 +512,13 @@
 //                           </div>
 //                           <h4 className="font-bold text-lg text-[#202124] truncate">{task.title}</h4>
 //                           {task.description && (
-//                             <p className="text-sm text-[#5f6368] mt-1.5 leading-relaxed line-clamp-2">
+//                             <p className="text-sm text-[#5f6368] mt-1.5 leading-relaxed line-clamp-2 whitespace-pre-line">
 //                               {task.description}
 //                             </p>
 //                           )}
 //                         </div>
 
-//                         {/* Action Buttons Container - pinned with shrink-0 */}
+//                         {/* Action Buttons Container */}
 //                         <div className="flex items-center gap-3 shrink-0 self-start sm:self-center pt-2 sm:pt-0">
 //                           {/* Info Button */}
 //                           <button 
@@ -565,6 +561,8 @@
 //   );
 // }
 
+
+
 import React, { useState, useEffect } from "react";
 import { 
   ChevronDown, 
@@ -596,6 +594,16 @@ function SubmitTaskModal({ task, onClose, onSuccess }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
+
+  // Lock body scroll while modal is active
+  useEffect(() => {
+    if (task) {
+      document.body.style.overflow = "hidden";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [task]);
 
   if (!task) return null;
 
@@ -679,11 +687,11 @@ function SubmitTaskModal({ task, onClose, onSuccess }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+    <div className="fixed inset-0 w-screen h-screen z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200 overflow-hidden">
       <div className="bg-white w-full max-w-lg rounded-2xl border border-[#dadce0] shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
         
         {/* Modal Header */}
-        <div className="p-6 border-b border-[#dadce0] flex items-center justify-between bg-[#f8f9fa]">
+        <div className="p-5 border-b border-[#dadce0] flex items-center justify-between bg-[#f8f9fa] shrink-0">
           <div>
             <span className="text-[11px] uppercase tracking-wider font-bold bg-[#e8f0fe] text-[#1a73e8] px-2.5 py-0.5 rounded-md">
               Submit Deliverable
@@ -699,7 +707,7 @@ function SubmitTaskModal({ task, onClose, onSuccess }) {
         </div>
 
         {/* Modal Body / Form */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-5 overflow-y-auto">
+        <form onSubmit={handleSubmit} className="p-6 space-y-5 overflow-y-auto flex-1">
           {/* Dynamic Link Inputs (Max 2) */}
           <div className="space-y-3">
             <label className="text-xs font-bold text-[#5f6368] uppercase flex items-center gap-1.5">
@@ -793,7 +801,7 @@ function SubmitTaskModal({ task, onClose, onSuccess }) {
           )}
 
           {/* Modal Actions */}
-          <div className="pt-3 border-t border-[#dadce0] flex justify-end gap-3">
+          <div className="pt-3 border-t border-[#dadce0] flex justify-end gap-3 shrink-0">
             <button
               type="button"
               onClick={onClose}
@@ -819,14 +827,24 @@ function SubmitTaskModal({ task, onClose, onSuccess }) {
 
 // --- Task Details Modal ---
 function TaskDetailsModal({ task, onClose, onSubmitClick }) {
+  // Lock body scroll while modal is active
+  useEffect(() => {
+    if (task) {
+      document.body.style.overflow = "hidden";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [task]);
+
   if (!task) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+    <div className="fixed inset-0 w-screen h-screen z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200 overflow-hidden">
       <div className="bg-white w-full max-w-lg rounded-2xl border border-[#dadce0] shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
         
         {/* Modal Header */}
-        <div className="p-6 border-b border-[#dadce0] flex items-center justify-between bg-[#f8f9fa]">
+        <div className="p-5 border-b border-[#dadce0] flex items-center justify-between bg-[#f8f9fa] shrink-0">
           <div className="flex items-center gap-2.5">
             <div className="p-2 bg-[#e8f0fe] rounded-lg">
               <Info className="w-5 h-5 text-[#1a73e8]" />
@@ -842,7 +860,7 @@ function TaskDetailsModal({ task, onClose, onSubmitClick }) {
         </div>
 
         {/* Modal Body */}
-        <div className="p-6 space-y-5 overflow-y-auto">
+        <div className="p-6 space-y-5 overflow-y-auto flex-1">
           {/* Title & Badge */}
           <div>
             <div className="flex items-center gap-2 mb-1.5">
@@ -853,7 +871,7 @@ function TaskDetailsModal({ task, onClose, onSubmitClick }) {
             <h3 className="text-xl font-bold text-[#202124]">{task.title}</h3>
           </div>
 
-          {/* Description with whitespace-pre-line to respect newline characters (\n) */}
+          {/* Description */}
           {task.description && (
             <div className="space-y-1">
               <label className="text-xs font-bold text-[#5f6368] uppercase flex items-center gap-1">
@@ -865,7 +883,7 @@ function TaskDetailsModal({ task, onClose, onSubmitClick }) {
             </div>
           )}
 
-          {/* Activity with whitespace-pre-line */}
+          {/* Activity */}
           <div className="space-y-1">
             <label className="text-xs font-bold text-[#5f6368] uppercase">HOW TO SUBMIT</label>
             <p className="text-sm text-[#3c4043] leading-relaxed whitespace-pre-wrap">
@@ -873,7 +891,7 @@ function TaskDetailsModal({ task, onClose, onSubmitClick }) {
             </p>
           </div>
 
-          {/* Things to Avoid with whitespace-pre-line */}
+          {/* Things to Avoid */}
           <div className="space-y-1">
             <label className="text-xs font-bold text-[#5f6368] uppercase">THINGS TO AVOID</label>
             <p className="text-sm text-[#3c4043] leading-relaxed whitespace-pre-wrap">
@@ -881,7 +899,7 @@ function TaskDetailsModal({ task, onClose, onSubmitClick }) {
             </p>
           </div>
 
-          {/* Target with whitespace-pre-line */}
+          {/* Target */}
           {task.target && (
             <div className="space-y-1">
               <label className="text-xs font-bold text-[#5f6368] uppercase flex items-center gap-1">
@@ -894,8 +912,8 @@ function TaskDetailsModal({ task, onClose, onSubmitClick }) {
           )}
 
           {/* Allowed Submissions */}
-          <div className="pt-2 border-t border-[#dadce0]">
-            {(task.isImageAllowed || task.isVideoAllowed) && (
+          {(task.isImageAllowed || task.isVideoAllowed) && (
+            <div className="pt-2 border-t border-[#dadce0]">
               <div className="p-3 bg-[#f8f9fa] rounded-xl border border-[#dadce0] flex flex-col items-center justify-center gap-1.5">
                 <p className="text-[11px] font-bold text-[#5f6368] uppercase">Allowed Formats</p>
                 <div className="flex items-center gap-6 text-xs font-medium text-[#202124]">
@@ -909,12 +927,12 @@ function TaskDetailsModal({ task, onClose, onSubmitClick }) {
                   </span>
                 </div>
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
 
         {/* Modal Footer */}
-        <div className="p-4 border-t border-[#dadce0] bg-[#f8f9fa] flex items-center justify-between">
+        <div className="p-4 border-t border-[#dadce0] bg-[#f8f9fa] flex items-center justify-between shrink-0">
           <button
             onClick={onClose}
             className="px-5 py-2 rounded-xl text-sm font-bold text-[#5f6368] hover:bg-gray-200 transition-colors cursor-pointer"
@@ -1004,7 +1022,7 @@ export default function AmbassadorTasks() {
   );
 
   return (
-    <div className="min-h-screen bg-[#f8f9fa] flex flex-col">
+    <div className="min-h-screen bg-[#f8f9fa] flex flex-col font-sans overflow-x-hidden">
       {/* Centered Minimal Navbar */}
       <header className="sticky top-0 z-30 bg-white border-b border-[#dadce0] px-4 py-3 flex items-center justify-center shadow-xs">
         <h2 className="text-base sm:text-lg font-bold text-[#3c4043]">
