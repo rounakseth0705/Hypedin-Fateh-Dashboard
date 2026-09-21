@@ -136,7 +136,7 @@ function SubmitTaskModal({ task, onClose, onSuccess }) {
           {/* Dynamic Link Inputs (Max 2) */}
           <div className="space-y-3">
             <label className="text-xs font-bold text-[#5f6368] uppercase flex items-center gap-1.5">
-              <LinkIcon className="w-3.5 h-3.5 text-[#1a73e8]" /> Submission URLs / Proof Links (Max 2)
+              <LinkIcon className="w-3.5 h-3.5 text-[#1a73e8]" /> Submission URLs / Proof Links
             </label>
 
             {urls.map((url, index) => (
@@ -283,9 +283,9 @@ function TaskDetailsModal({ task, onClose, onSubmitClick }) {
               <span className="text-[11px] uppercase tracking-wider font-bold bg-[#e8f0fe] text-[#1a73e8] px-2.5 py-0.5 rounded-md">
                 {task.periodicity || "Task"}
               </span>
-              <span className="text-xs font-semibold text-[#5f6368]">
+              {/* <span className="text-xs font-semibold text-[#5f6368]">
                 Phase {task.taskMonth} • Week {task.taskWeek}
-              </span>
+              </span> */}
             </div>
             <h3 className="text-xl font-bold text-[#202124]">{task.title}</h3>
           </div>
