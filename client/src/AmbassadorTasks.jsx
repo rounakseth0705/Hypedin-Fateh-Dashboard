@@ -859,7 +859,7 @@ function TaskDetailsModal({ task, onClose, onSubmitClick }) {
               <label className="text-xs font-bold text-[#5f6368] uppercase flex items-center gap-1">
                 <FileText className="w-3.5 h-3.5" /> Description
               </label>
-              <p className="text-sm text-[#202124] leading-relaxed bg-[#f8f9fa] p-3.5 rounded-xl border border-[#dadce0] whitespace-pre-line">
+              <p className="text-sm text-[#202124] leading-relaxed bg-[#f8f9fa] p-3.5 rounded-xl border border-[#dadce0] whitespace-pre-wrap">
                 {task.description}
               </p>
             </div>
@@ -868,7 +868,7 @@ function TaskDetailsModal({ task, onClose, onSubmitClick }) {
           {/* Activity with whitespace-pre-line */}
           <div className="space-y-1">
             <label className="text-xs font-bold text-[#5f6368] uppercase">HOW TO SUBMIT</label>
-            <p className="text-sm text-[#3c4043] leading-relaxed whitespace-pre-line">
+            <p className="text-sm text-[#3c4043] leading-relaxed whitespace-pre-wrap">
               {task.activity || "N/A"}
             </p>
           </div>
@@ -876,7 +876,7 @@ function TaskDetailsModal({ task, onClose, onSubmitClick }) {
           {/* Things to Avoid with whitespace-pre-line */}
           <div className="space-y-1">
             <label className="text-xs font-bold text-[#5f6368] uppercase">THINGS TO AVOID</label>
-            <p className="text-sm text-[#3c4043] leading-relaxed whitespace-pre-line">
+            <p className="text-sm text-[#3c4043] leading-relaxed whitespace-pre-wrap">
               {task.thingsToAvoid || "N/A"}
             </p>
           </div>
@@ -887,7 +887,7 @@ function TaskDetailsModal({ task, onClose, onSubmitClick }) {
               <label className="text-xs font-bold text-[#5f6368] uppercase flex items-center gap-1">
                 <Target className="w-3.5 h-3.5" /> Target
               </label>
-              <p className="text-sm text-[#3c4043] bg-amber-50 text-amber-900 border border-amber-200 p-3 rounded-xl whitespace-pre-line">
+              <p className="text-sm text-[#3c4043] bg-amber-50 text-amber-900 border border-amber-200 p-3 rounded-xl whitespace-pre-wrap">
                 {task.target}
               </p>
             </div>
