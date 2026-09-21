@@ -873,7 +873,7 @@ export default function AmbassadorDashboard() {
                       <tr key={task._id || idx} onClick={() => navigate("/ambassador/tasks")} className="hover:bg-[#f0f4f9]/50 transition-colors cursor-pointer">
                         <td className="py-4 px-6 max-w-xs">
                           <div className="font-bold text-[#202124] text-sm">{task.title}</div>
-                          {task.activity && <div className="text-[#5f6368] text-[11px] mt-0.5 line-clamp-1">{task.activity}</div>}
+                          {task.activity && <div className="text-[#5f6368] text-[11px] mt-0.5 line-clamp-1">{task.description}</div>}
                         </td>
                         <td className="py-4 px-6">
                           <span className="inline-flex items-center px-2.5 py-1 rounded-md bg-[#f1f3f4] text-[#3c4043] font-medium text-[11px]">
