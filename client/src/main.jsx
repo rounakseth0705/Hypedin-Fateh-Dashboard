@@ -16,6 +16,7 @@ import Profile from './Profile.jsx'
 import AmbassadorInbox from './AmbassadorInbox.jsx'
 import ProtectedRoute from './ProtectedRoute.jsx'
 import AdminTasks from './AdminTasks.jsx'
+import AdminInbox from './AdminInbox.jsx'
 
 const router = createBrowserRouter([
   {
@@ -78,6 +79,12 @@ const router = createBrowserRouter([
             path: "createTask",
             element: <ProtectedRoute>
               <CreateTask/>
+            </ProtectedRoute>
+          },
+          {
+            path: "inbox",
+            element: <ProtectedRoute>
+              <AdminInbox/>
             </ProtectedRoute>
           }
         ]
