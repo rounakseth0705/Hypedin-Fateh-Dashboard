@@ -1106,7 +1106,7 @@ export default function AmbassadorTasks() {
                         {/* Action Buttons Container */}
                         <div className="flex items-center gap-3 shrink-0 self-start sm:self-center pt-2 sm:pt-0">
                           {/* Info Button */}
-                          <button 
+                          {/* <button 
                             type="button" 
                             title="Task Information"
                             onClick={(e) => {
@@ -1116,7 +1116,7 @@ export default function AmbassadorTasks() {
                             className="p-3 rounded-xl border border-[#dadce0] text-[#5f6368] hover:bg-[#f1f3f4] hover:text-[#1a73e8] hover:border-[#1a73e8] transition-all cursor-pointer shrink-0"
                           >
                             <Info className="w-5 h-5" />
-                          </button>
+                          </button> */}
 
                           {/* Submit Button */}
                           <button 
