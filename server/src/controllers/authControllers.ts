@@ -126,7 +126,7 @@ const setPassword = async (req: AuthRequest, res: Response) => {
         }
 
         user.password = newPassword;
-        user.hasChangedPassword = true;
+        user.hasChangePassword = true;
         await user.save();
 
         return res.status(200).json({ success: true, message: "Password set successfully" });

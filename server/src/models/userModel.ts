@@ -8,7 +8,7 @@ interface IUser extends mongoose.Document {
     phoneNo: string,
     password: string,
     role: "Ambassador" | "Admin" | "POC",
-    hasChangedPassword: boolean,
+    hasChangePassword: boolean,
     comparePassword(password: string): Promise<boolean| null>,
     createJWT(): Promise<string | null>
 }

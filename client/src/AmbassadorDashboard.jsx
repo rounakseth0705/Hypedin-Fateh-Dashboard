@@ -1153,7 +1153,7 @@ export default function AmbassadorDashboard() {
 
   // Check user password status on mount
   useEffect(() => {
-    if (user && user.hasChangedPassword === false) {
+    if (user && user.hasChangePassword === false) {
       setShowPasswordModal(true);
     }
   }, [user]);

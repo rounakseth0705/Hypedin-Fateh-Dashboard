@@ -102,7 +102,7 @@ const createAmbassadorAccount = async (req: Request, res: Response) => {
             return res.status(400).json({ success: false, message: "Email, Phone or Ambassador ID already exists" });
         }
 
-        const user = await UserModel.create({ name, email, phoneNo, password, hasChangedPassword: false, role: "Ambassador" });
+        const user = await UserModel.create({ name, email, phoneNo, password, hasChangePassword: false, role: "Ambassador" });
 
         await AmbassadorModel.create({ userId: user._id, ID, city, college });
 
