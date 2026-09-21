@@ -1,5 +1,5 @@
 import React from "react";
-import { Users, ListTodo, PlusCircle, LogOut, X } from "lucide-react";
+import { Users, ListTodo, PlusCircle, LogOut, X, Inbox } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import API from "./config/api";
 
