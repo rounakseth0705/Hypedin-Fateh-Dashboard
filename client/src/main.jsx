@@ -14,6 +14,8 @@ import AmbassadorTasks from './AmbassadorTasks.jsx'
 import ContactUs from './ContactUs.jsx'
 import Profile from './Profile.jsx'
 import AmbassadorInbox from './AmbassadorInbox.jsx'
+import ProtectedRoute from './ProtectedRoute.jsx'
+import AdminTasks from './AdminTasks.jsx'
 
 const router = createBrowserRouter([
   {
@@ -26,23 +28,33 @@ const router = createBrowserRouter([
       },
       {
         path: "/ambassador",
-        element: <AmbassadorLayout/>,
+        element: <ProtectedRoute>
+          <AmbassadorLayout/>
+        </ProtectedRoute>,
         children: [
           {
             index: true,
-            element: <AmbassadorDashboard/>
+            element: <ProtectedRoute>
+              <AmbassadorDashboard/>
+            </ProtectedRoute>
           },
           {
             path: "tasks",
-            element: <AmbassadorTasks/>
+            element: <ProtectedRoute>
+              <AmbassadorTasks/>
+            </ProtectedRoute>
           },
           {
             path: "inbox",
-            element: <AmbassadorInbox/>
+            element: <ProtectedRoute>
+              <AmbassadorInbox/>
+            </ProtectedRoute>
           },
           {
             path: "profile",
-            element: <Profile/>
+            element: <ProtectedRoute>
+              <Profile/>
+            </ProtectedRoute>
           }
         ]
       },
@@ -52,11 +64,21 @@ const router = createBrowserRouter([
         children: [
           {
             index: true,
-            element: <Ambassadors/>
+            element: <ProtectedRoute>
+              <Ambassadors/>
+            </ProtectedRoute>
+          },
+          {
+            path: "tasks",
+            element: <ProtectedRoute>
+              <AdminTasks/>
+            </ProtectedRoute>
           },
           {
             path: "createTask",
-            element: <CreateTask/>
+            element: <ProtectedRoute>
+              <CreateTask/>
+            </ProtectedRoute>
           }
         ]
       }
