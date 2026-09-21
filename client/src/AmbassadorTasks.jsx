@@ -513,7 +513,7 @@ export default function AmbassadorTasks() {
                             </span>
                           </div>
                           <h4 className="font-bold text-lg text-[#202124]">{task.title}</h4>
-                          {/* <p className="text-sm text-[#5f6368] mt-1.5 leading-relaxed line-clamp-2">{task.description}</p> */}
+                          <p className="text-sm text-[#5f6368] mt-1.5 leading-relaxed line-clamp-2">{task.description}</p>
                         </div>
 
                         <div className="flex items-center gap-3">
