@@ -373,6 +373,7 @@ function TaskDetailsModal({ task, onClose, onSubmitClick }) {
 }
 
 // --- Main AmbassadorTasks Component ---
+// --- Main AmbassadorTasks Component ---
 export default function AmbassadorTasks() {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -449,7 +450,7 @@ export default function AmbassadorTasks() {
       </header>
 
       {/* Main Content Area */}
-      <main className="w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-8 flex-1">
+      <main className="w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-8 flex-1 overflow-x-hidden">
         <TaskDetailsModal 
           task={selectedTask} 
           onClose={() => setSelectedTask(null)}
@@ -490,7 +491,7 @@ export default function AmbassadorTasks() {
                 {!locked && (
                   <button 
                     onClick={() => togglePhase(phase.id)}
-                    className="text-sm font-bold text-[#1a73e8] hover:bg-blue-50 px-4 py-2 rounded-lg flex items-center gap-2 transition-colors cursor-pointer"
+                    className="text-sm font-bold text-[#1a73e8] hover:bg-blue-50 px-4 py-2 rounded-lg flex items-center gap-2 transition-colors cursor-pointer shrink-0"
                   >
                     {expanded ? <><ChevronUp className="w-5 h-5"/> COLLAPSE</> : <><ChevronDown className="w-5 h-5"/> EXPAND</>}
                   </button>
@@ -504,33 +505,25 @@ export default function AmbassadorTasks() {
                       <div 
                         key={task._id} 
                         onClick={() => setSelectedTask(task)}
-                        className="p-6 sm:p-8 hover:bg-[#f8f9fa] cursor-pointer transition-colors flex flex-col md:flex-row md:items-center justify-between gap-6"
+                        className="p-6 sm:p-8 hover:bg-[#f8f9fa] cursor-pointer transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:gap-6 overflow-hidden"
                       >
-                        {/* <div className="flex-1">
+                        {/* Text Container with min-w-0 to allow text truncation and prevent flex expansion */}
+                        <div className="flex-1 min-w-0 pr-2">
                           <div className="mb-2">
                             <span className="text-[11px] uppercase tracking-wider font-bold bg-[#e8f0fe] text-[#1a73e8] px-3 py-1 rounded-md">
                               {task.periodicity || "Task"}
                             </span>
                           </div>
-                          <h4 className="font-bold text-lg text-[#202124]">{task.title}</h4>
-                          <p className="text-sm text-[#5f6368] mt-1.5 leading-relaxed line-clamp-2">{task.description}</p>
-                        </div> */}
+                          <h4 className="font-bold text-lg text-[#202124] truncate">{task.title}</h4>
+                          {task.description && (
+                            <p className="text-sm text-[#5f6368] mt-1.5 leading-relaxed line-clamp-2">
+                              {task.description}
+                            </p>
+                          )}
+                        </div>
 
-                        <div className="flex-1">
-  <div className="mb-2">
-    <span className="text-[11px] uppercase tracking-wider font-bold bg-[#e8f0fe] text-[#1a73e8] px-3 py-1 rounded-md">
-      {task.periodicity || "Task"}
-    </span>
-  </div>
-  <h4 className="font-bold text-lg text-[#202124]">{task.title}</h4>
-  {task.description && (
-    <p className="text-sm text-[#5f6368] mt-1.5 leading-relaxed truncate">
-      {task.description}
-    </p>
-  )}
-</div>
-
-                        <div className="flex items-center gap-3">
+                        {/* Action Buttons Container - pinned with shrink-0 */}
+                        <div className="flex items-center gap-3 shrink-0 self-start sm:self-center pt-2 sm:pt-0">
                           {/* Info Button */}
                           <button 
                             type="button" 
@@ -539,7 +532,7 @@ export default function AmbassadorTasks() {
                               e.stopPropagation();
                               setSelectedTask(task);
                             }}
-                            className="p-3 rounded-xl border border-[#dadce0] text-[#5f6368] hover:bg-[#f1f3f4] hover:text-[#1a73e8] hover:border-[#1a73e8] transition-all cursor-pointer"
+                            className="p-3 rounded-xl border border-[#dadce0] text-[#5f6368] hover:bg-[#f1f3f4] hover:text-[#1a73e8] hover:border-[#1a73e8] transition-all cursor-pointer shrink-0"
                           >
                             <Info className="w-5 h-5" />
                           </button>
@@ -551,10 +544,10 @@ export default function AmbassadorTasks() {
                               e.stopPropagation();
                               setSubmittingTask(task);
                             }}
-                            className="flex items-center justify-center gap-2 bg-[#202124] text-white px-8 py-3.5 rounded-xl font-bold text-sm hover:bg-black shadow-md transition-all cursor-pointer"
+                            className="flex items-center justify-center gap-2 bg-[#202124] text-white px-5 sm:px-6 py-3 rounded-xl font-bold text-sm hover:bg-black shadow-md transition-all cursor-pointer shrink-0"
                           >
                             <Send className="w-4 h-4" />
-                            SUBMIT TASK
+                            <span>SUBMIT TASK</span>
                           </button>
                         </div>
                       </div>
