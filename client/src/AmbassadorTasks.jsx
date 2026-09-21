@@ -161,7 +161,7 @@ function SubmitTaskModal({ task, onClose, onSuccess }) {
               </div>
             ))}
 
-            {urls.length < 2 && task._id !== "6aad38059613bc1f9ce71098" && (
+            {urls.length < 2 && (
               <button
                 type="button"
                 onClick={addUrlField}
@@ -506,7 +506,7 @@ export default function AmbassadorTasks() {
                         onClick={() => setSelectedTask(task)}
                         className="p-6 sm:p-8 hover:bg-[#f8f9fa] cursor-pointer transition-colors flex flex-col md:flex-row md:items-center justify-between gap-6"
                       >
-                        <div className="flex-1">
+                        {/* <div className="flex-1">
                           <div className="mb-2">
                             <span className="text-[11px] uppercase tracking-wider font-bold bg-[#e8f0fe] text-[#1a73e8] px-3 py-1 rounded-md">
                               {task.periodicity || "Task"}
@@ -514,7 +514,21 @@ export default function AmbassadorTasks() {
                           </div>
                           <h4 className="font-bold text-lg text-[#202124]">{task.title}</h4>
                           <p className="text-sm text-[#5f6368] mt-1.5 leading-relaxed line-clamp-2">{task.description}</p>
-                        </div>
+                        </div> */}
+
+                        <div className="flex-1">
+  <div className="mb-2">
+    <span className="text-[11px] uppercase tracking-wider font-bold bg-[#e8f0fe] text-[#1a73e8] px-3 py-1 rounded-md">
+      {task.periodicity || "Task"}
+    </span>
+  </div>
+  <h4 className="font-bold text-lg text-[#202124]">{task.title}</h4>
+  {task.description && (
+    <p className="text-sm text-[#5f6368] mt-1.5 leading-relaxed truncate">
+      {task.description}
+    </p>
+  )}
+</div>
 
                         <div className="flex items-center gap-3">
                           {/* Info Button */}
