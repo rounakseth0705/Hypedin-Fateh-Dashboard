@@ -880,12 +880,12 @@ export default function AmbassadorDashboard() {
                             {task.periodicity || "N/A"}
                           </span>
                         </td>
-                        <td className="py-4 px-6">
+                        {/* <td className="py-4 px-6">
                           <div className="flex items-center gap-1.5 text-[#5f6368]">
                             <Target className="w-3.5 h-3.5 text-[#1a73e8]" />
                             <span className="font-semibold text-[#202124]">{task.target || "No Minimum"}</span>
                           </div>
-                        </td>
+                        </td> */}
                         <td className="py-4 px-6">
                           <div className="flex items-center gap-2">
                             {task.isImageAllowed && (
