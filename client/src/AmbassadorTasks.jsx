@@ -846,9 +846,9 @@ function TaskDetailsModal({ task, onClose, onSubmitClick }) {
         {/* Modal Header */}
         <div className="p-5 border-b border-[#dadce0] flex items-center justify-between bg-[#f8f9fa] shrink-0">
           <div className="flex items-center gap-2.5">
-            <div className="p-2 bg-[#e8f0fe] rounded-lg">
+            {/* <div className="p-2 bg-[#e8f0fe] rounded-lg">
               <Info className="w-5 h-5 text-[#1a73e8]" />
-            </div>
+            </div> */}
             <h2 className="text-xl font-bold text-[#202124]">Task Details</h2>
           </div>
           <button 
