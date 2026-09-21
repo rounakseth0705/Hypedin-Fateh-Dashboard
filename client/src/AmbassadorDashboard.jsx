@@ -860,7 +860,7 @@ export default function AmbassadorDashboard() {
                   <tr className="bg-[#f8f9fa] border-b border-[#dadce0] text-[11px] font-bold uppercase tracking-wider text-[#5f6368]">
                     <th className="py-3.5 px-6">Task Title</th>
                     <th className="py-3.5 px-6">Periodicity</th>
-                    <th className="py-3.5 px-6">Target</th>
+                    {/* <th className="py-3.5 px-6">Target</th> */}
                     <th className="py-3.5 px-6">Allowed Media</th>
                     <th className="py-3.5 px-6 text-right">Status</th>
                   </tr>
