@@ -310,6 +310,13 @@ function TaskDetailsModal({ task, onClose, onSubmitClick }) {
             </p>
           </div>
 
+          <div className="space-y-1">
+            <label className="text-xs font-bold text-[#5f6368] uppercase">THINGS TO AVOID</label>
+            <p className="text-sm text-[#3c4043] leading-relaxed">
+              {task.thingsToAvoid || "N/A"}
+            </p>
+          </div>
+
           {/* Target */}
           {task.target && (
             <div className="space-y-1">
