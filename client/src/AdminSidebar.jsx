@@ -1,5 +1,5 @@
 import React from "react";
-import { Users, ListTodo, PlusCircle, LogOut, X, Inbox } from "lucide-react";
+import { Users, ListTodo, PlusCircle, LogOut, X, Inbox, User } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import API from "./config/api";
 
@@ -12,6 +12,7 @@ export default function AdminSidebar({ isOpen, onClose }) {
     { name: "Tasks", path: "/adminDashboard/tasks", icon: ListTodo },
     { name: "Create Task", path: "/adminDashboard/createTask", icon: PlusCircle },
     { name: "Inbox", path: "/adminDashboard/inbox", icon: Inbox },
+    { name: "Create Ambassador", path: "/adminDashboard/createAmbassador", icon: User }
   ];
 
   const handleLogout = async () => {

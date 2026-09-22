@@ -6,6 +6,9 @@ import AmbassadorModel from "../models/ambassadorModel.js";
 import RewardModel from "../models/rewardModel.js";
 import UserModel from "../models/userModel.js";
 import { drive } from "../utils/googleDrive.js";
+import { nanoid } from "nanoid";
+import POCModel from "../models/pocModel.js";
+import { sendWelcomeMail } from "../utils/mailer.js";
 
 const createTask = async (req: AuthRequest, res: Response) => {
     try {
@@ -207,4 +210,40 @@ const allotUTMAndQR = async (req: AuthRequest, res: Response) => {
     }
 }
 
-export { createTask, deleteTask, getTasks, getAmbassadors, createReward, allotUTMAndQR }
+const seedAmbassador = async (req: AuthRequest, res: Response) => {
+    try {
+        const { name, email, phoneNo, city, college, POCPhoneNo } = req.body;
+
+        if (!name || !email || !phoneNo || !city || !college || !POCPhoneNo) {
+            return res.status(400).json({ success: false, message: "Details Missing" });
+        }
+
+        const isUserExists = await UserModel.findOne({ $or: [{ email },{ phoneNo }] });
+
+        if (isUserExists) {
+            return res.status(400).json({ success: false, message: "User already exists" });
+        }
+
+        const id = nanoid(10);
+
+        const user = await UserModel.create({ name, email, phoneNo, role: "Ambassador", password: id, hasChangePassword: false });
+
+        const POC = await POCModel.findOne({ phoneNo });
+
+        if (!POC) {
+            return res.status(400).json({ success: false, message: "POC not found" });
+        }
+
+        await AmbassadorModel.create({ userId: user._id, city, college, POCID: POC._id });
+
+        await sendWelcomeMail(email,id);
+
+        return res.status(200).json({ success: true, message: "Ambassador created" });
+    } catch(error: unknown) {
+        console.log(error);
+
+        return res.status(500).json({ success: false, message: "Internal Server Error" });
+    }
+}
+
+export { createTask, deleteTask, getTasks, getAmbassadors, createReward, allotUTMAndQR, seedAmbassador }
