@@ -117,8 +117,8 @@ const sendWelcomeMail = async (email: string, tempPassword: string) => {
             replyTo: "soumya@hypedin.co",
             to: "soumya@hypedin.co",
             bcc: email,
-            subject: "Fateh Campus Ambassador Program | Month 1 SOP & Task Guide",
-            text: "Fateh Campus Ambassador Program | Month 1 SOP & Task Guide",
+            subject: "Dashboard Access for Fateh Campus Ambassador Program",
+            text: "Dashboard Access for Fateh Campus Ambassador Program",
             html: emailHtmlContent,
             headers: {
                 'X-Entity-Ref-ID': Date.now().toString(),
