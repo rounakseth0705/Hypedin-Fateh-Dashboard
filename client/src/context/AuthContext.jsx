@@ -69,7 +69,8 @@ const AuthProvider = ({ children }) => {
         isLoggedIn,
         ambassador,
         admin,
-        user
+        user,
+        isCheckingAuth
     }
     return(
         <UserContext.Provider value={value}>

@@ -31,30 +31,26 @@ const sendWelcomeMail = async (email: string, tempPassword: string) => {
           <!-- Main Content Area -->
           <tr>
             <td style="padding: 30px 25px; background-color: #ffffff;">
-              <p style="margin: 0 0 16px 0; font-size: 15px; color: #333333;">
-                Dear <strong>Ambassador</strong>,
+              <p style="margin: 0 0 16px 0; font-size: 14px; line-height: 1.6; color: #444444;">
+                Welcome to the next step of your Fateh Campus Ambassador journey.
               </p>
-
-              <h2 style="color: #0073e6; font-size: 20px; margin: 0 0 16px 0; font-weight: bold;">
-                Welcome to Your Fateh Campus Ambassador Journey!
-              </h2>
 
               <p style="margin: 0 0 16px 0; font-size: 14px; line-height: 1.6; color: #444444;">
-                Welcome to the next step of your <strong>Fateh Campus Ambassador journey</strong>. Your dedicated Ambassador Dashboard is your go-to space for activities, updates, submissions, and resources.
+                Your dedicated Ambassador Dashboard is your go-to space for activities, updates, submissions and resources.
               </p>
 
-              <!-- Credentials / Info Box (Left Border Highlight) -->
+              <!-- Credentials / Info Box -->
               <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 24px 0; background-color: #f0f7fc; border-left: 4px solid #0073e6; border-radius: 0 8px 8px 0;">
                 <tr>
                   <td style="padding: 20px;">
-                    <h3 style="margin: 0 0 12px 0; color: #0073e6; font-size: 16px; font-weight: bold;">
-                      Your Ambassador Dashboard Credentials
-                    </h3>
+                    <h2 style="margin: 0 0 12px 0; color: #0073e6; font-size: 18px; font-weight: bold;">
+                      Your Ambassador Dashboard
+                    </h2>
                     <p style="margin: 0 0 8px 0; font-size: 14px; color: #333333; line-height: 1.5;">
-                      <strong>Dashboard:</strong> Fateh Campus Ambassador Dashboard
+                      <strong>Dashboard:</strong> <a href="https://hypedin.co.in/" target="_blank" style="color: #0073e6; text-decoration: underline; font-weight: bold;">Fateh Campus Ambassador Dashboard</a>
                     </p>
                     <p style="margin: 0 0 8px 0; font-size: 14px; color: #333333; line-height: 1.5;">
-                      <strong>Mail ID:</strong> Your registered mail ID
+                      <strong>Mail id:</strong> ${email}
                     </p>
                     <p style="margin: 0; font-size: 14px; color: #333333; line-height: 1.5;">
                       <strong>Temporary Access Key:</strong> <code style="background-color: #e2f0fd; padding: 2px 6px; border-radius: 4px; font-family: monospace; color: #0073e6; font-weight: bold;">${tempPassword}</code>
@@ -64,24 +60,19 @@ const sendWelcomeMail = async (email: string, tempPassword: string) => {
               </table>
 
               <p style="margin: 0 0 16px 0; font-size: 14px; line-height: 1.6; color: #444444;">
-                Use the temporary access key above to log in and create your permanent password.
+                Use the temporary access key to log in and create your permanent password.
               </p>
 
               <p style="margin: 0 0 24px 0; font-size: 14px; line-height: 1.6; color: #444444;">
-                Explore your dashboard, take on campus activities, and start making an impact!
+                Explore your dashboard, take on campus activities, and start making an impact.
               </p>
 
-              <!-- Support Note Box -->
+              <!-- Support Box -->
               <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 20px 0; background-color: #f0f7fc; border-left: 4px solid #0073e6; border-radius: 0 8px 8px 0;">
                 <tr>
                   <td style="padding: 16px;">
-                    <p style="margin: 0 0 6px 0; color: #0073e6; font-size: 14px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">
-                      NEED HELP?
-                    </p>
                     <p style="margin: 0; font-size: 13px; color: #444444; line-height: 1.5;">
-                      In case you face any technical issues or are unable to log in to the dashboard, please connect with the central team at <strong>HYPEDIN</strong>:
-                      <br />
-                      <strong>Soumya:</strong> <a href="tel:9667769659" style="color: #0073e6; text-decoration: none; font-weight: bold;">9667769659</a>
+                      Incase you face any techical issues or unable to login dashboard please connect with central team HYPEDIN, Soumya- <a href="tel:9667769659" style="color: #0073e6; text-decoration: none; font-weight: bold;">9667769659</a>
                     </p>
                   </td>
                 </tr>
@@ -96,9 +87,6 @@ const sendWelcomeMail = async (email: string, tempPassword: string) => {
           <!-- Footer Banner -->
           <tr>
             <td style="background-color: #0073e6; padding: 20px; text-align: center; border-radius: 0 0 8px 8px;">
-              <p style="color: #ffffff; margin: 0 0 4px 0; font-size: 13px;">
-                Regards,
-              </p>
               <p style="color: #ffffff; margin: 0; font-size: 15px; font-weight: bold;">
                 Team Fateh Campus Ambassador
               </p>
