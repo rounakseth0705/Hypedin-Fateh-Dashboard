@@ -62,11 +62,6 @@ const sendWelcomeMail = async (email: string, tempPassword: string) => {
               <p style="margin: 0 0 16px 0; font-size: 14px; line-height: 1.6; color: #444444;">
                 Use the temporary access key to log in and create your permanent password.
               </p>
-
-              <p style="margin: 0 0 24px 0; font-size: 14px; line-height: 1.6; color: #444444;">
-                Explore your dashboard, take on campus activities, and start making an impact.
-              </p>
-
               <!-- Support Box -->
               <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 20px 0; background-color: #f0f7fc; border-left: 4px solid #0073e6; border-radius: 0 8px 8px 0;">
                 <tr>
@@ -88,7 +83,7 @@ const sendWelcomeMail = async (email: string, tempPassword: string) => {
           <tr>
             <td style="background-color: #0073e6; padding: 20px; text-align: center; border-radius: 0 0 8px 8px;">
               <p style="color: #ffffff; margin: 0; font-size: 15px; font-weight: bold;">
-                Team Fateh Campus Ambassador
+                Fateh Campus Ambassador Program Team
               </p>
             </td>
           </tr>
