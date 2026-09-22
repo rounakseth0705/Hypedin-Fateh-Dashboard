@@ -7,11 +7,13 @@ import { drive } from "../utils/googleDrive.js";
 import UserModel from "../models/userModel.js";
 import AmbassadorModel from "../models/ambassadorModel.js";
 import SubmissionModel from "../models/submissionsModel.js";
+import { logToGoogleSheets } from "../utils/googleSheets.js";
 
 const submitTask = async (req: AuthRequest, res: Response) => {
+    let submission;
     try {
         const { proofURLs } = req.body;
-        const taskId = req.params;
+        const { taskId } = req.params;
         const userId = req.userId;
         const files = req.files as Express.Multer.File[];
 
@@ -74,14 +76,31 @@ const submitTask = async (req: AuthRequest, res: Response) => {
             }
         }
 
-        await SubmissionModel.create({ ambassadorId: ambassador._id, taskId: task._id, proofURLs, status: "Pending" });
+        submission = await SubmissionModel.create({ ambassadorId: ambassador._id, taskId: task._id, proofURLs, status: "Pending" });
+
+        if (!submission) {
+            return res.status(500).json({ success: false, message: "Submission Failed, please try agin" });
+        }
+
+        const googleSheetId: string | undefined = process.env.GOOGLE_SHEETS_ID_SUBMISSION;
+
+        if (!googleSheetId) {
+            throw new Error("Submission Failed, please try again");
+        }
+
+        let rawProofURLs: string = submission.proofURLs.join(",");
+        const result: boolean = await logToGoogleSheets(googleSheetId,[user.email, user.phoneNo, rawProofURLs]);
+
+        if (!result) {
+            throw new Error("Submission Failed, please try again");
+        }
 
         return res.status(200).json({ success: true, message: "Task Submitted" });
     } catch(error: unknown) {
-        if (error instanceof Error) {
-            console.log(error.message);
-        } else {
-            console.log("Unknown Error:", error);
+        console.log(error);
+
+        if (submission) {
+            await SubmissionModel.findByIdAndDelete(submission._id);
         }
 
         return res.status(500).json({ success: false, message: "Internal Server Error" });
