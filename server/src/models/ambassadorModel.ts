@@ -7,9 +7,9 @@ interface IAmbassador extends mongoose.Document {
     college: string,
     taskCompleted: number,
     completedTasks?: mongoose.Types.ObjectId[],
-    POCID?: mongoose.Types.ObjectId,
-    isUTMAlloted: boolean,
-    isQRAlloted: boolean,
+    POCID: mongoose.Types.ObjectId,
+    isUTMAlloted?: boolean,
+    isQRAlloted?: boolean,
     UTM?: string,
     QR?: string
 }
