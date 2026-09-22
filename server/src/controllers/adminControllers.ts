@@ -228,7 +228,7 @@ const seedAmbassador = async (req: AuthRequest, res: Response) => {
 
         const user = await UserModel.create({ name, email, phoneNo, role: "Ambassador", password: id, hasChangePassword: false });
 
-        const POC = await POCModel.findOne({ phoneNo });
+        const POC = await POCModel.findOne({ phoneNo: POCPhoneNo });
 
         if (!POC) {
             return res.status(400).json({ success: false, message: "POC not found" });
@@ -246,4 +246,32 @@ const seedAmbassador = async (req: AuthRequest, res: Response) => {
     }
 }
 
-export { createTask, deleteTask, getTasks, getAmbassadors, createReward, allotUTMAndQR, seedAmbassador }
+const seedPOC = async (req: AuthRequest, res: Response) => {
+    try {
+        const { name, phoneNo, email, password } = req.body;
+
+        console.log(req.body);
+
+        if (!name || !email || !phoneNo) {
+            return res.status(400).json({ success: false, message: "Details Missing" });
+        }
+
+        const isPOCExists = await UserModel.findOne({ $or: [{ email },{ phoneNo }] });
+
+        if (isPOCExists) {
+            return res.status(400).json({ success: false, message: "POC already exists" });
+        }
+
+        const user = await UserModel.create({ name, email, phoneNo, password, role: "POC" });
+
+        await POCModel.create({ name, email, phoneNo, userId: user._id });
+
+        return res.status(200).json({ success: true, message: "POC created" });
+    } catch(error: unknown) {
+        console.log(error);
+
+        return res.status(500).json({ success: false, message: "Internal Server Error" });
+    }
+}
+
+export { createTask, deleteTask, getTasks, getAmbassadors, createReward, allotUTMAndQR, seedAmbassador, seedPOC }
