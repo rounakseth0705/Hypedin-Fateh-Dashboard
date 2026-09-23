@@ -24,8 +24,6 @@ const sendMessageToInbox = async (req: AuthRequest, res: Response) => {
 
         const DRIVE_FOLDER_ID: string | undefined = process.env.GOOGLE_DRIVE_FOLDER_ID_ATTACHMENTS as string;
         let attachmentLinks: string[] = [];
-
-        console.log(DRIVE_FOLDER_ID);
     
         if (files) {
             if (!DRIVE_FOLDER_ID) {
