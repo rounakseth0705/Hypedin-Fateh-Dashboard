@@ -1,4 +1,4 @@
-// import React, { useState } from "react";
+// import React, { useState, useEffect } from "react";
 // import API from "./config/api";
 
 // const CITIES = [
@@ -19,8 +19,32 @@
 //     POCPhoneNo: "",
 //   });
 
+//   const [pocList, setPocList] = useState([]);
 //   const [loading, setLoading] = useState(false);
 //   const [responseMsg, setResponseMsg] = useState({ type: "", text: "" });
+
+//   useEffect(() => {
+//     const fetchPOCs = async () => {
+//       try {
+//         const response = await API.get("/admin/getPOCs");
+//         const { success, POCs } = response.data;
+
+//         if (success && Array.isArray(POCs)) {
+//           setPocList(POCs);
+//           if (POCs.length > 0) {
+//             setFormData((prev) => ({
+//               ...prev,
+//               POCPhoneNo: POCs[0].phoneNo || POCs[0].POCPhoneNo || "",
+//             }));
+//           }
+//         }
+//       } catch (error) {
+//         console.error("Failed to fetch POCs:", error);
+//       }
+//     };
+
+//     fetchPOCs();
+//   }, []);
 
 //   const handleChange = (e) => {
 //     const { name, value } = e.target;
@@ -75,7 +99,7 @@
 //           phoneNo: "",
 //           city: "Bengaluru",
 //           college: "",
-//           POCPhoneNo: "",
+//           POCPhoneNo: pocList.length > 0 ? (pocList[0].phoneNo || pocList[0].POCPhoneNo || "") : "",
 //         });
 //       } else {
 //         setResponseMsg({
@@ -211,22 +235,31 @@
 //                 />
 //               </div>
 
-//               {/* POC Phone Number */}
+//               {/* POC Phone Number Dropdown */}
 //               <div className="flex flex-col gap-1.5">
 //                 <label className="text-xs font-semibold text-slate-700">
 //                   POC Phone Number <span className="text-red-500">*</span>
 //                 </label>
-//                 <input
-//                   type="text"
-//                   inputMode="numeric"
+//                 <select
 //                   name="POCPhoneNo"
 //                   value={formData.POCPhoneNo}
 //                   onChange={handleChange}
-//                   placeholder="10-digit POC phone number"
-//                   maxLength={10}
 //                   required
-//                   className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-//                 />
+//                   className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 cursor-pointer transition-colors"
+//                 >
+//                   {pocList.length === 0 ? (
+//                     <option value="">No POCs available</option>
+//                   ) : (
+//                     pocList.map((poc, idx) => {
+//                       const phone = poc.phoneNo || poc.POCPhoneNo || "";
+//                       return (
+//                         <option key={poc._id || poc.id || idx} value={phone}>
+//                           {phone} {poc.name ? `(${poc.name})` : ""}
+//                         </option>
+//                       );
+//                     })
+//                   )}
+//                 </select>
 //               </div>
 //             </div>
 
@@ -252,6 +285,7 @@
 
 import React, { useState, useEffect } from "react";
 import API from "./config/api";
+import toast from "react-hot-toast";
 
 const CITIES = [
   "Bengaluru",
@@ -273,7 +307,6 @@ const CreateAmbassador = () => {
 
   const [pocList, setPocList] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [responseMsg, setResponseMsg] = useState({ type: "", text: "" });
 
   useEffect(() => {
     const fetchPOCs = async () => {
@@ -317,33 +350,23 @@ const CreateAmbassador = () => {
 
     // Validation for exactly 10 digits
     if (formData.phoneNo.length !== 10) {
-      setResponseMsg({
-        type: "error",
-        text: "Phone Number must be exactly 10 digits.",
-      });
+      toast.error("Phone Number must be exactly 10 digits.");
       return;
     }
 
     if (formData.POCPhoneNo.length !== 10) {
-      setResponseMsg({
-        type: "error",
-        text: "POC Phone Number must be exactly 10 digits.",
-      });
+      toast.error("POC Phone Number must be exactly 10 digits.");
       return;
     }
 
     setLoading(true);
-    setResponseMsg({ type: "", text: "" });
 
     try {
       const response = await API.post("/admin/createAmbassador", formData);
       const { success, message } = response.data;
 
       if (success) {
-        setResponseMsg({
-          type: "success",
-          text: message || "Ambassador created successfully!",
-        });
+        toast.success(message || "Ambassador created successfully!");
         // Reset form
         setFormData({
           name: "",
@@ -354,18 +377,13 @@ const CreateAmbassador = () => {
           POCPhoneNo: pocList.length > 0 ? (pocList[0].phoneNo || pocList[0].POCPhoneNo || "") : "",
         });
       } else {
-        setResponseMsg({
-          type: "error",
-          text: message || "Failed to create ambassador.",
-        });
+        toast.error(message || "Failed to create ambassador.");
       }
     } catch (error) {
-      setResponseMsg({
-        type: "error",
-        text:
-          error.response?.data?.message ||
-          "Something went wrong while connecting to server.",
-      });
+      toast.error(
+        error.response?.data?.message ||
+          "Something went wrong while connecting to server."
+      );
     } finally {
       setLoading(false);
     }
@@ -386,19 +404,6 @@ const CreateAmbassador = () => {
 
         {/* Main Card */}
         <div className="bg-white rounded-2xl p-5 sm:p-8 shadow-sm border border-slate-200 w-full">
-          {/* Alert Box */}
-          {responseMsg.text && (
-            <div
-              className={`p-3 sm:p-4 rounded-lg text-sm font-medium mb-6 border ${
-                responseMsg.type === "success"
-                  ? "bg-emerald-50 text-emerald-800 border-emerald-200"
-                  : "bg-red-50 text-red-800 border-red-200"
-              }`}
-            >
-              {responseMsg.text}
-            </div>
-          )}
-
           <form onSubmit={handleSubmit} className="flex flex-col gap-5 sm:gap-6">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
               {/* Full Name */}
