@@ -68,7 +68,7 @@ app.use("/api/admin", adminRouter);
 app.use("/api/ambassador", ambassadorRouter);
 app.use("/api/inboxMessages", inboxMessagesRouter);
 
-app.get("/auth/google/callback", async (req, res) => {
+app.get("/api/auth/google/callback", async (req, res) => {
     const { code } = req.query;
     console.log("OAUTH REQUEST HIT");
 
