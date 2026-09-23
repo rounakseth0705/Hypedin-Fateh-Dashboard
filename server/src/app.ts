@@ -68,6 +68,15 @@ app.use("/api/admin", adminRouter);
 app.use("/api/ambassador", ambassadorRouter);
 app.use("/api/inboxMessages", inboxMessagesRouter);
 
+app.get("/auth/google/callback", async (req, res) => {
+    const { code } = req.query;
+    console.log("OAUTH REQUEST HIT");
+
+    console.log("Authorization code", code);
+
+    res.send("Google OAuth authorization successfull!");
+})
+
 const initialize = async () => {
     try {
         const PORT = process.env.PORT;
