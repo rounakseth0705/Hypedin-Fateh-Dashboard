@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import API from "./config/api.js";
 import { Mail, MessageSquare, Loader2, AlertCircle, Clock, Send, X } from "lucide-react";
+import toast from "react-hot-toast";
 
 const AdminInbox = () => {
   const [messages, setMessages] = useState([]);
@@ -26,12 +27,14 @@ const AdminInbox = () => {
       if (response.data?.success) {
         setMessages(response.data.messages || []);
       } else {
-        setError(response.data?.message || "Failed to fetch messages.");
+        const errMsg = response.data?.message || "Failed to fetch messages.";
+        setError(errMsg);
+        toast.error(errMsg);
       }
     } catch (err) {
-      setError(
-        err.response?.data?.message || "An error occurred while loading messages."
-      );
+      const errMsg = err.response?.data?.message || "An error occurred while loading messages.";
+      setError(errMsg);
+      toast.error(errMsg);
     } finally {
       setLoading(false);
     }
@@ -50,16 +53,19 @@ const AdminInbox = () => {
       });
 
       if (response.data?.success) {
+        toast.success(response.data?.message || "Broadcast message sent successfully!");
         setBroadcastContent("");
         setIsModalOpen(false);
         fetchInboxMessages(); // Refresh messages list
       } else {
-        setSendError(response.data?.message || "Failed to send message.");
+        const errMsg = response.data?.message || "Failed to send message.";
+        setSendError(errMsg);
+        toast.error(errMsg);
       }
     } catch (err) {
-      setSendError(
-        err.response?.data?.message || "An error occurred while sending the message."
-      );
+      const errMsg = err.response?.data?.message || "An error occurred while sending the message.";
+      setSendError(errMsg);
+      toast.error(errMsg);
     } finally {
       setSending(false);
     }
