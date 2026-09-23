@@ -22,12 +22,12 @@ const sendMessageToInbox = async (req: AuthRequest, res: Response) => {
             return res.status(500).json({ success: false, message: "Something went wrong, try again." });
         }
 
-        const DRIVE_FOLDER_ID: string | undefined = process.env.GOOGLE_DRIVE_FOLDER_ID_ATTACHMENTS as string;
+        const DRIVE_FOLDER_ID: string = "15N1iEfgI7zE18xZXfVRcGBOPvzUl7Dd1"
         let attachmentLinks: string[] = [];
 
         console.log(DRIVE_FOLDER_ID);
     
-        if (files) {
+        if (files.length > 0) {
             if (!DRIVE_FOLDER_ID) {
                 throw new Error("DRIVE FOLDER ID NOT FOUND");
             }
@@ -56,7 +56,7 @@ const sendMessageToInbox = async (req: AuthRequest, res: Response) => {
             }
         }
 
-        if (files) {
+        if (files.length > 0) {
             await InboxMessageModel.create({ message, userId, isImageAttached: true, attachmentLinks });
         } else {
             await InboxMessageModel.create({ message, userId, isImageAttached: false });
