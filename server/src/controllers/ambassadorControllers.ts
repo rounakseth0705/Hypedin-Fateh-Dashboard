@@ -45,15 +45,18 @@ const submitTask = async (req: AuthRequest, res: Response) => {
             return res.status(400).json({ success: false, message: "Document not required" });
         }
 
-        const DRIVE_FOLDER_ID = process.env.GOOGLE_DRIVE_FOLDER_ID as string;
+        const DRIVE_FOLDER_ID = process.env.GOOGLE_DRIVE_FOLDER_ID_SUBMISSIONS as string;
 
         if (files) {
+            if (!DRIVE_FOLDER_ID) {
+                throw new Error("DRIVE FOLDER NOT FOUND");
+            }
             for (const file of files) {
                 const bufferStream = Readable.from(file.buffer);
 
                 const driveResponse = await drive.files.create({
                     requestBody: {
-                        name: `${user.name}_${ambassador.ID}`,
+                        name: `${user.name}_${user._id}`,
                         parents: [DRIVE_FOLDER_ID],
                     },
                     media: {
