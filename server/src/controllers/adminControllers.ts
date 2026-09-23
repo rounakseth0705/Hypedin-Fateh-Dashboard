@@ -9,6 +9,7 @@ import { drive } from "../utils/googleDrive.js";
 import { nanoid } from "nanoid";
 import POCModel from "../models/pocModel.js";
 import { sendWelcomeMail } from "../utils/mailer.js";
+import SubmissionModel from "../models/submissionsModel.js";
 
 const createTask = async (req: AuthRequest, res: Response) => {
     try {
@@ -76,12 +77,34 @@ const deleteTask = async (req: Request, res: Response) => {
 const getTasks = async (req: Request, res: Response) => {
     try {
         const tasks = await TaskModel.find({ });
+
+        return res.status(200).json({ success: true, tasks, message: "Tasks Fetched" });
     } catch(error: unknown) {
-        if (error instanceof Error) {
-            console.log(error.message);
-        } else {
-            console.log("Unknown Error:", error);
-        }
+        console.log(error);
+
+        return res.status(500).json({ success: false, message: "Internal Server Error" });
+    }
+}
+
+const getSubmissions = async (req: Request, res: Response) => {
+    try {
+        const submissions = await SubmissionModel.find({});
+
+        return res.status(200).json({ success: false, submissions, message: "Submissions Fetched" });
+    } catch(error: unknown) {
+        console.log(error);
+
+        return res.status(500).json({ success: false, message: "Internal Server Error" });
+    }
+}
+
+const getPOCs = async (req: Request, res: Response) => {
+    try {
+        const POCs = await POCModel.find({});
+
+        return res.status(200).json({ success: true, POCs, message: "POCs fetched" });
+    } catch(error: unknown) {
+        console.log(error);
 
         return res.status(500).json({ success: false, message: "Internal Server Error" });
     }
@@ -274,4 +297,4 @@ const seedPOC = async (req: AuthRequest, res: Response) => {
     }
 }
 
-export { createTask, deleteTask, getTasks, getAmbassadors, createReward, allotUTMAndQR, seedAmbassador, seedPOC }
+export { createTask, deleteTask, getTasks, getAmbassadors, createReward, allotUTMAndQR, seedAmbassador, seedPOC, getSubmissions, getPOCs }
