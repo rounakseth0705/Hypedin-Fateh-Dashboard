@@ -202,7 +202,6 @@ const AdminTasks = () => {
           <SubmissionsList
             submissions={reviewSubmissions}
             loading={loadingSubmissions}
-            error={submissionsError}
             emptyTitle="No Submissions to Review"
             emptyDesc="All submissions have been reviewed or none are pending/rejected."
           />
@@ -213,7 +212,6 @@ const AdminTasks = () => {
           <SubmissionsList
             submissions={completedSubmissions}
             loading={loadingSubmissions}
-            error={submissionsError}
             emptyTitle="No Completed Submissions"
             emptyDesc="There are no approved submissions yet."
           />
@@ -224,15 +222,7 @@ const AdminTasks = () => {
 };
 
 // Sub-component to render Submissions (Review Submissions & Completed Tasks)
-const SubmissionsList = ({ submissions, loading, error, emptyTitle, emptyDesc }) => {
-  if (error) {
-    return (
-      <div className="p-4 rounded-xl text-sm font-medium mb-6 bg-red-50 text-red-800 border border-red-200">
-        {error}
-      </div>
-    );
-  }
-
+const SubmissionsList = ({ submissions, loading, emptyTitle, emptyDesc }) => {
   if (loading) {
     return (
       <div className="flex flex-col gap-4">
