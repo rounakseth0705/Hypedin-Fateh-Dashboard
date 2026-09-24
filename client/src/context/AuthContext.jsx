@@ -11,7 +11,6 @@ const AuthProvider = ({ children }) => {
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   const [user, setUser] = useState(null);
   const [ambassador, setAmbassador] = useState(null);
-  const [admin, setAdmin] = useState(null);
 
   const login = async (email, password) => {
     try {
@@ -25,15 +24,12 @@ const AuthProvider = ({ children }) => {
         if (response.data.success) {
           toast.success("Logged in successfully!");
 
+          setUser(response.data.user);
+          setIsLoggedIn(true);
           if (response.data.user.role === "Ambassador") {
-            setUser(response.data.user);
             setAmbassador(response.data.ambassador);
-            setIsLoggedIn(true);
             navigate("/ambassador");
           } else if (response.data.user.role === "Admin") {
-            setUser(response.data.user);
-            setAdmin(response.data.admin);
-            setIsLoggedIn(true);
             navigate("/adminDashboard");
           }
         } else {
@@ -57,9 +53,7 @@ const AuthProvider = ({ children }) => {
 
       if (response && response.data?.success) {
         setUser(response.data.user);
-        if (response.data.user.role === "Admin") {
-          setAdmin(response.data.admin);
-        } else {
+        if (response.data.user.role === "Ambassador") {
           setAmbassador(response.data.ambassador);
         }
         setIsLoggedIn(true);
@@ -80,7 +74,6 @@ const AuthProvider = ({ children }) => {
     login,
     isLoggedIn,
     ambassador,
-    admin,
     user,
     isCheckingAuth,
   };

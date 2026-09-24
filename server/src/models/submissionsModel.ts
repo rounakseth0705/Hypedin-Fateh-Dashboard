@@ -18,7 +18,7 @@ const submissionSchema = new mongoose.Schema({
     status: { type: String, required: true },
     adminFeedback: { type: String },
     remarks: { type: String },
-    reviewedBy: { type: mongoose.Schema.Types.ObjectId, ref: "admin" },
+    reviewedBy: { type: mongoose.Schema.Types.ObjectId, ref: "user" },
     reviewedOn: { type: Date }
 },{ timestamps: true });
 

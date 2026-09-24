@@ -297,4 +297,40 @@ const seedPOC = async (req: AuthRequest, res: Response) => {
     }
 }
 
-export { createTask, deleteTask, getTasks, getAmbassadors, createReward, allotUTMAndQR, seedAmbassador, seedPOC, getSubmissions, getPOCs }
+const reviewSubmission = async (req: AuthRequest, res: Response) => {
+    try {
+        const { adminReview, adminFeedback, submissionId } = req.body;
+        const userId = req.userId;
+
+        if (!adminReview || !userId || !submissionId) {
+            return res.status(400).json({ success: false, message: "Details missing" });
+        }
+
+        const user = await UserModel.findById(userId);
+
+        if (!user) {
+            return res.status(500).json({ success: false, message: "User not found" });
+        }
+
+        const submission = await SubmissionModel.findById(submissionId);
+
+        if (!submission) {
+            return res.status(400).json({ success: false, message: "Submission not found" });
+        }
+        
+        submission.status = adminReview;
+        if (adminFeedback) {
+            submission.adminFeedback = adminFeedback;
+        }
+        submission.reviewedBy = user._id;
+        submission.reviewedOn = new Date();
+
+        return res.status(200).json({ success: true, message: "Submission successfully reviewed" });
+    } catch(error: unknown) {
+        console.log(error);
+
+        return res.status(500).json({ success: false, message: "Internal Server Error" });
+    }
+}
+
+export { createTask, deleteTask, getTasks, getAmbassadors, createReward, allotUTMAndQR, seedAmbassador, seedPOC, getSubmissions, getPOCs, reviewSubmission }

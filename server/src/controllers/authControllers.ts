@@ -2,7 +2,6 @@ import type { Request, Response } from "express";
 import UserModel from "../models/userModel.js";
 import type { AuthRequest } from "../middlewares/auth.js";
 import AmbassadorModel from "../models/ambassadorModel.js";
-import AdminModel from "../models/adminModel.js";
 
 const login = async (req: Request, res: Response) => {
     try {
@@ -28,11 +27,9 @@ const login = async (req: Request, res: Response) => {
 
         if (user.role === "Ambassador") {
             platformDetails = await AmbassadorModel.findOne({ userId: user._id });
-        } else if (user.role === "Admin") {
-            platformDetails = await AdminModel.findOne({ userId: user._id });
         }
 
-        if (!platformDetails) {
+        if (user.role === "Ambassador" && !platformDetails) {
             return res.status(500).json({ success: false, message: "Ambassador not found" });
         }
 
@@ -52,7 +49,7 @@ const login = async (req: Request, res: Response) => {
         if (user.role === "Ambassador") {
             return res.status(200).json({ success: true, user, ambassador: platformDetails, message: "Logged in successfully" });
         } else {
-            return res.status(200).json({ success: true, user, admin: platformDetails, message: "Logged in successfully" });
+            return res.status(200).json({ success: true, user, message: "Logged in successfully" });
         }
     } catch(error: unknown) { 
         if (error instanceof Error) {
@@ -84,18 +81,16 @@ const verifyMe = async (req: AuthRequest, res: Response) => {
 
         if (role === "Ambassador") {
             platformDetails = await AmbassadorModel.findOne({ userId });
-        } else {
-            platformDetails = await AdminModel.findOne({ userId });
         }
 
-        if (!platformDetails) {
+        if (user.role === "Ambassador" && !platformDetails) {
             return res.status(500).json({ success: false, message: "Details not found" });
         }
 
         if (role === "Ambassador") {
             return res.status(200).json({ success: true, user, ambassador: platformDetails, message: "Ambassador verified" });
         } else {
-            return res.status(200).json({ success: true, user, admin: platformDetails, message: "Admin verified" });
+            return res.status(200).json({ success: true, user, message: "Admin verified" });
         }
     } catch(error: unknown) {
         console.log(error);
@@ -119,7 +114,7 @@ const setPassword = async (req: AuthRequest, res: Response) => {
             return res.status(500).json({ success: false, message: "User not found" });
         }
 
-        const isCurrentPasswordCorrect = user.comparePassword(currentPassword);
+        const isCurrentPasswordCorrect = await user.comparePassword(currentPassword);
 
         if (!isCurrentPasswordCorrect) {
             return res.status(400).json({ success: false, message: "Incorrect Password" });
@@ -172,16 +167,20 @@ const changePassword = async (req: AuthRequest, res: Response) => {
             return res.status(500).json({ success: false, message: "User not found" });
         }
 
-        const isPasswordCorrect = user.comparePassword(user.password);
+        const isPasswordCorrect = await user.comparePassword(currentPassword);
 
         if (!isPasswordCorrect) {
             return res.status(400).json({ success: false, message: "Incorrect Password" });
         }
 
+        if (currentPassword === newPassword) {
+            return res.status(400).json({ success: false, message: "Current and new password can't be same" });
+        }
+
         user.password = newPassword;
         await user.save();
 
-        return res.status(200).json({ success: false, message: "Password Changed" });
+        return res.status(200).json({ success: true, message: "Password Changed" });
     } catch(error: unknown) {
         if (error instanceof Error) {
             console.log(error.message);

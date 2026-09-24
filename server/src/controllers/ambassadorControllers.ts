@@ -45,6 +45,12 @@ const submitTask = async (req: AuthRequest, res: Response) => {
             return res.status(400).json({ success: false, message: "Document not required" });
         }
 
+        const isSubmissionExists = await SubmissionModel.findOne({ ambassadorId: ambassador._id, taskId });
+
+        if (isSubmissionExists && task.periodicity === "One Time") {
+            return res.status(400).json({ success: false, message: "Task has been already submitted" });
+        }
+
         const DRIVE_FOLDER_ID = process.env.GOOGLE_DRIVE_FOLDER_ID_SUBMISSIONS as string;
 
         if (files) {
@@ -91,12 +97,19 @@ const submitTask = async (req: AuthRequest, res: Response) => {
             throw new Error("Submission Failed, please try again");
         }
 
-        let rawProofURLs: string = submission.proofURLs.join(",");
-        const result: boolean = await logToGoogleSheets(googleSheetId,[user.email, user.phoneNo, rawProofURLs]);
+        let rawProofURLs: string = submission.proofURLs.join(", ");
+        const result: boolean = await logToGoogleSheets(googleSheetId,[user.email, user.phoneNo, task.title, rawProofURLs]);
 
         if (!result) {
             throw new Error("Submission Failed, please try again");
         }
+
+        // ambassador.taskCompleted = (ambassador.taskCompleted || 0) + 1;
+        // if (!Array.isArray(ambassador.completedTasks)) {
+        //     ambassador.completedTasks = [];
+        // }
+        // ambassador.completedTasks.push(task._id);
+        // await ambassador.save();
 
         return res.status(200).json({ success: true, message: "Task Submitted" });
     } catch(error: unknown) {
@@ -172,4 +185,34 @@ const getRewards = async (req: Request, res: Response) => {
     }
 }
 
-export { submitTask, getTasks, getRewards, createAmbassadorAccount }
+const getMySubmissions = async (req: AuthRequest, res: Response) => {
+    try {
+        const userId = req.userId;
+
+        if (!userId) {
+            return res.status(500).json({ success: false, message: "Something went wrong" });
+        }
+
+        const user = await UserModel.findById(userId);
+
+        if (!user) {
+            return res.status(500).json({ success: false, message: "User not found" });
+        }
+
+        const ambassador = await AmbassadorModel.findOne({ userId });
+
+        if (!ambassador) {
+            return res.status(500).json({ success: false, message: "Ambassador not found" });
+        }
+
+        const submissions = await SubmissionModel.find({ ambassadorId: ambassador._id }).select("taskId");
+
+        return res.status(200).json({ success: true, submissions, message: "Submissions fetched" });
+    } catch(error: unknown) {
+        console.log(error);
+
+        return res.status(500).json({ success: false, message: "Internal Server Error" });
+    }
+}
+
+export { submitTask, getTasks, getRewards, createAmbassadorAccount, getMySubmissions }
