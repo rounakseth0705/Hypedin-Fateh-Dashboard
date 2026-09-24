@@ -104,12 +104,12 @@ const submitTask = async (req: AuthRequest, res: Response) => {
             throw new Error("Submission Failed, please try again");
         }
 
-        // ambassador.taskCompleted = (ambassador.taskCompleted || 0) + 1;
-        // if (!Array.isArray(ambassador.completedTasks)) {
-        //     ambassador.completedTasks = [];
-        // }
-        // ambassador.completedTasks.push(task._id);
-        // await ambassador.save();
+        ambassador.taskSubmitted = (ambassador.taskSubmitted || 0) + 1;
+        if (!Array.isArray(ambassador.submittedTasks)) {
+            ambassador.submittedTasks = [];
+        }
+        ambassador.submittedTasks.push(task._id);
+        await ambassador.save();
 
         return res.status(200).json({ success: true, message: "Task Submitted" });
     } catch(error: unknown) {

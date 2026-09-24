@@ -324,6 +324,22 @@ const reviewSubmission = async (req: AuthRequest, res: Response) => {
         }
         submission.reviewedBy = user._id;
         submission.reviewedOn = new Date();
+        await submission.save();
+
+        if (adminReview === "Approved") {
+            const ambassador = await AmbassadorModel.findById(submission.ambassadorId);
+
+            if (!ambassador) {
+                return res.status(500).json({ success: false, message: "Ambassador not found" });
+            }
+
+            ambassador.taskCompleted = (ambassador.taskCompleted || 0) + 1;
+            if (!Array.isArray(ambassador.completedTasks)) {
+                ambassador.completedTasks = [];
+            }
+            ambassador.completedTasks.push(submission.taskId);
+            await ambassador.save();
+        }
 
         return res.status(200).json({ success: true, message: "Submission successfully reviewed" });
     } catch(error: unknown) {
