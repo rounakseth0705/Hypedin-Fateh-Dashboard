@@ -90,7 +90,7 @@ const getSubmissions = async (req: Request, res: Response) => {
     try {
         const submissions = await SubmissionModel.find({}).populate("taskId","title").populate({ path: "ambassadorId", populate: { path: "userId", select: "name email phoneNo" } });
 
-        return res.status(200).json({ success: false, submissions, message: "Submissions Fetched" });
+        return res.status(200).json({ success: true, submissions, message: "Submissions Fetched" });
     } catch(error: unknown) {
         console.log(error);
 
@@ -326,7 +326,7 @@ const reviewSubmission = async (req: AuthRequest, res: Response) => {
         submission.reviewedOn = new Date();
         await submission.save();
 
-        if (adminReview === "Approved") {
+        if (adminReview === "Approved" && submission.status === "Pending") {
             const ambassador = await AmbassadorModel.findById(submission.ambassadorId);
 
             if (!ambassador) {
@@ -337,11 +337,36 @@ const reviewSubmission = async (req: AuthRequest, res: Response) => {
             if (!Array.isArray(ambassador.completedTasks)) {
                 ambassador.completedTasks = [];
             }
+
             ambassador.completedTasks.push(submission.taskId);
             await ambassador.save();
         }
 
-        return res.status(200).json({ success: true, message: "Submission successfully reviewed" });
+        if (adminReview === "Rejected" && submission.status === "Approved") {
+            const ambassador = await AmbassadorModel.findById(submission.ambassadorId);
+
+            if (!ambassador) {
+                return res.status(500).json({ success: false, message: "Ambassador not found" });
+            }
+
+            ambassador.taskCompleted = ambassador.taskCompleted > 0 ? ambassador.taskCompleted - 1 : 0;
+            if (!Array.isArray(ambassador.completedTasks)) {
+                ambassador.completedTasks = [];
+            }
+
+            const index = ambassador.completedTasks.indexOf(submission.taskId);
+            
+            if (index !== -1) {
+                ambassador.completedTasks.splice(index,1);
+            }
+            await ambassador.save();
+        }
+
+        if (adminReview === "Approved") {
+            return res.status(200).json({ success: true, message: "Submission approved" });
+        } else {
+            return res.status(200).json({ success: true, message: "Submission rejected" });
+        }
     } catch(error: unknown) {
         console.log(error);
 

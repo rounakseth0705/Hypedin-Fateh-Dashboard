@@ -86,4 +86,26 @@ const getMessages = async (req: AuthRequest, res: Response) => {
     }
 }
 
-export { sendMessageToInbox, getMessages }
+const deleteMessageFromInbox = async (req: AuthRequest, res: Response) => {
+    try {
+        const { messageId } = req.params;
+
+        if (!messageId) {
+            return res.status(400).json({ success: false, message: "Message not provided" });
+        }
+
+        const message = await InboxMessageModel.findByIdAndDelete(messageId);
+
+        if (!message) {
+            return res.status(400).json({ success: false, message: "Message not found" });
+        } else {
+            return res.status(200).json({ success: true, message: "Message deleted from inbox" });
+        }
+    } catch(error: unknown) {
+        console.log(error);
+
+        return res.status(500).json({ success: false, message: "Internal Server Error" });
+    }
+}
+
+export { sendMessageToInbox, getMessages, deleteMessageFromInbox }

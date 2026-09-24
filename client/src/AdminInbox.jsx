@@ -116,6 +116,16 @@
 //     }
 //   };
 
+//   // Helper to convert Google Drive viewing URLs into direct image render URLs
+//   const getDriveImageUrl = (url) => {
+//     if (!url) return "";
+//     const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/) || url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+//     if (match && match[1]) {
+//       return `https://drive.google.com/thumbnail?id=${match[1]}&sz=w1000`;
+//     }
+//     return url;
+//   };
+
 //   // Helper to parse text and turn URLs starting with http:// or https:// into clickable links
 //   const renderFormattedContent = (content) => {
 //     if (!content) return "No content provided.";
@@ -227,9 +237,35 @@
 //               )}
 
 //               {/* Message Content */}
-//               <div className="text-sm text-[#202124] leading-relaxed whitespace-pre-wrap bg-[#f8f9fa] p-4 rounded-xl border border-[#dadce0]">
-//                 {renderFormattedContent(msg.content || msg.message)}
-//               </div>
+//               {msg.message && msg.message.trim() !== "" && (
+//                 <div className="text-sm text-[#202124] leading-relaxed whitespace-pre-wrap bg-[#f8f9fa] p-4 rounded-xl border border-[#dadce0]">
+//                   {renderFormattedContent(msg.message)}
+//                 </div>
+//               )}
+
+//               {/* Display Images from attachmentLinks */}
+//               {Array.isArray(msg.attachmentLinks) && msg.attachmentLinks.length > 0 && (
+//                 <div className="pt-2">
+//                   <p className="text-xs font-semibold text-[#5f6368] uppercase mb-2">Attachments</p>
+//                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+//                     {msg.attachmentLinks.map((link, i) => (
+//                       <a
+//                         key={i}
+//                         href={link}
+//                         target="_blank"
+//                         rel="noopener noreferrer"
+//                         className="group relative block overflow-hidden rounded-xl border border-[#dadce0] bg-[#f8f9fa] aspect-video"
+//                       >
+//                         <img
+//                           src={getDriveImageUrl(link)}
+//                           alt={`Attachment ${i + 1}`}
+//                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+//                         />
+//                       </a>
+//                     ))}
+//                   </div>
+//                 </div>
+//               )}
 //             </div>
 //           ))}
 //         </div>
@@ -371,9 +407,10 @@
 
 
 
+
 import React, { useState, useEffect } from "react";
 import API from "./config/api.js";
-import { Mail, MessageSquare, Loader2, AlertCircle, Clock, Send, X, Paperclip, Image as ImageIcon } from "lucide-react";
+import { Mail, MessageSquare, Loader2, AlertCircle, Clock, Send, X, Paperclip, Image as ImageIcon, Trash2 } from "lucide-react";
 import toast from "react-hot-toast";
 
 const AdminInbox = () => {
@@ -388,6 +425,7 @@ const AdminInbox = () => {
   const [imagePreviews, setImagePreviews] = useState([]);
   const [sending, setSending] = useState(false);
   const [sendError, setSendError] = useState(null);
+  const [deletingId, setDeletingId] = useState(null);
 
   useEffect(() => {
     fetchInboxMessages();
@@ -412,6 +450,27 @@ const AdminInbox = () => {
       toast.error(errMsg);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDeleteMessage = async (messageId) => {
+    try {
+      setDeletingId(messageId);
+      const response = await API.delete(`/inboxMessages/deleteMessage/${messageId}`);
+
+      const { success, message } = response.data || {};
+
+      if (success) {
+        toast.success(message || "Message deleted successfully.");
+        setMessages((prev) => prev.filter((msg) => msg._id !== messageId));
+      } else {
+        toast.error(message || "Failed to delete message.");
+      }
+    } catch (err) {
+      const errMsg = err.response?.data?.message || "An error occurred while deleting the message.";
+      toast.error(errMsg);
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -594,12 +653,29 @@ const AdminInbox = () => {
                     From: <span className="text-[#202124]">{msg.sender || "Fateh Campus Ambassador Team"}</span>
                   </span>
                 </div>
-                {msg.createdAt && (
-                  <div className="flex items-center gap-1 text-xs text-[#5f6368]">
-                    <Clock className="w-3.5 h-3.5" />
-                    <span>{new Date(msg.createdAt).toLocaleString()}</span>
-                  </div>
-                )}
+
+                <div className="flex items-center gap-3">
+                  {msg.createdAt && (
+                    <div className="flex items-center gap-1 text-xs text-[#5f6368]">
+                      <Clock className="w-3.5 h-3.5" />
+                      <span>{new Date(msg.createdAt).toLocaleString()}</span>
+                    </div>
+                  )}
+
+                  {/* Delete Button */}
+                  <button
+                    onClick={() => handleDeleteMessage(msg._id)}
+                    disabled={deletingId === msg._id}
+                    title="Delete Message"
+                    className="p-1.5 text-[#5f6368] hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
+                  >
+                    {deletingId === msg._id ? (
+                      <Loader2 className="w-4 h-4 animate-spin text-red-600" />
+                    ) : (
+                      <Trash2 className="w-4 h-4" />
+                    )}
+                  </button>
+                </div>
               </div>
 
               {/* Message Title */}
