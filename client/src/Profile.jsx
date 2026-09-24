@@ -12,7 +12,8 @@
 //   Lock,
 //   X,
 //   Eye,
-//   EyeOff
+//   EyeOff,
+//   Loader2
 // } from "lucide-react";
 // import toast from "react-hot-toast";
 
@@ -47,6 +48,11 @@
 //   };
 
 //   const handleChangePassword = async () => {
+//     if (!currentPassword || !newPassword || !confirmPassword) {
+//       toast.error("Please fill in all password fields");
+//       return;
+//     }
+
 //     if (newPassword !== confirmPassword) {
 //       toast.error("New Password and Confirm New Password doesn't match");
 //       return;
@@ -224,8 +230,9 @@
 //               </div>
 //               <button
 //                 type="button"
+//                 disabled={loading}
 //                 onClick={handleCloseModal}
-//                 className="p-1.5 text-[#5f6368] hover:bg-[#f1f3f4] rounded-lg transition-colors"
+//                 className="p-1.5 text-[#5f6368] hover:bg-[#f1f3f4] rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
 //               >
 //                 <X className="w-5 h-5" />
 //               </button>
@@ -241,15 +248,17 @@
 //                 <div className="relative">
 //                   <input
 //                     type={showCurrentPassword ? "text" : "password"}
+//                     disabled={loading}
 //                     value={currentPassword}
 //                     onChange={(e) => setCurrentPassword(e.target.value)}
 //                     placeholder="Enter current password"
-//                     className="w-full px-3.5 py-2.5 pr-10 bg-[#f8f9fa] border border-[#dadce0] rounded-xl text-sm focus:outline-none focus:border-[#1a73e8] text-[#202124]"
+//                     className="w-full px-3.5 py-2.5 pr-10 bg-[#f8f9fa] border border-[#dadce0] rounded-xl text-sm focus:outline-none focus:border-[#1a73e8] text-[#202124] disabled:opacity-60"
 //                   />
 //                   <button
 //                     type="button"
+//                     disabled={loading}
 //                     onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-//                     className="absolute right-3 top-1/2 -translate-y-1/2 text-[#5f6368] hover:text-[#202124] transition-colors"
+//                     className="absolute right-3 top-1/2 -translate-y-1/2 text-[#5f6368] hover:text-[#202124] transition-colors disabled:opacity-50"
 //                   >
 //                     {showCurrentPassword ? (
 //                       <EyeOff className="w-4 h-4" />
@@ -268,15 +277,17 @@
 //                 <div className="relative">
 //                   <input
 //                     type={showNewPassword ? "text" : "password"}
+//                     disabled={loading}
 //                     value={newPassword}
 //                     onChange={(e) => setNewPassword(e.target.value)}
 //                     placeholder="Enter new password"
-//                     className="w-full px-3.5 py-2.5 pr-10 bg-[#f8f9fa] border border-[#dadce0] rounded-xl text-sm focus:outline-none focus:border-[#1a73e8] text-[#202124]"
+//                     className="w-full px-3.5 py-2.5 pr-10 bg-[#f8f9fa] border border-[#dadce0] rounded-xl text-sm focus:outline-none focus:border-[#1a73e8] text-[#202124] disabled:opacity-60"
 //                   />
 //                   <button
 //                     type="button"
+//                     disabled={loading}
 //                     onClick={() => setShowNewPassword(!showNewPassword)}
-//                     className="absolute right-3 top-1/2 -translate-y-1/2 text-[#5f6368] hover:text-[#202124] transition-colors"
+//                     className="absolute right-3 top-1/2 -translate-y-1/2 text-[#5f6368] hover:text-[#202124] transition-colors disabled:opacity-50"
 //                   >
 //                     {showNewPassword ? (
 //                       <EyeOff className="w-4 h-4" />
@@ -295,15 +306,17 @@
 //                 <div className="relative">
 //                   <input
 //                     type={showConfirmPassword ? "text" : "password"}
+//                     disabled={loading}
 //                     value={confirmPassword}
 //                     onChange={(e) => setConfirmPassword(e.target.value)}
 //                     placeholder="Confirm new password"
-//                     className="w-full px-3.5 py-2.5 pr-10 bg-[#f8f9fa] border border-[#dadce0] rounded-xl text-sm focus:outline-none focus:border-[#1a73e8] text-[#202124]"
+//                     className="w-full px-3.5 py-2.5 pr-10 bg-[#f8f9fa] border border-[#dadce0] rounded-xl text-sm focus:outline-none focus:border-[#1a73e8] text-[#202124] disabled:opacity-60"
 //                   />
 //                   <button
 //                     type="button"
+//                     disabled={loading}
 //                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-//                     className="absolute right-3 top-1/2 -translate-y-1/2 text-[#5f6368] hover:text-[#202124] transition-colors"
+//                     className="absolute right-3 top-1/2 -translate-y-1/2 text-[#5f6368] hover:text-[#202124] transition-colors disabled:opacity-50"
 //                   >
 //                     {showConfirmPassword ? (
 //                       <EyeOff className="w-4 h-4" />
@@ -321,9 +334,16 @@
 //                 type="button"
 //                 disabled={loading}
 //                 onClick={handleChangePassword}
-//                 className="px-4 py-2 bg-[#1a73e8] hover:bg-[#1557b0] text-white rounded-xl text-xs font-semibold transition-colors disabled:opacity-50"
+//                 className="flex items-center justify-center gap-2 min-w-[150px] px-4 py-2 bg-[#1a73e8] hover:bg-[#1557b0] text-white rounded-xl text-xs font-semibold transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
 //               >
-//                 {loading ? "Changing..." : "Change Password"}
+//                 {loading ? (
+//                   <>
+//                     <Loader2 className="w-4 h-4 animate-spin" />
+//                     <span>Changing...</span>
+//                   </>
+//                 ) : (
+//                   <span>Change Password</span>
+//                 )}
 //               </button>
 //             </div>
 //           </div>
@@ -531,11 +551,26 @@ const Profile = () => {
           </div>
 
           <div className="flex flex-col justify-center h-[calc(100%-60px)] space-y-4">
-            {/* Tasks Completed Metric Card */}
+            {/* Total Tasks Submitted */}
             <div className="p-5 bg-gradient-to-br from-[#f8f9fa] to-[#e8f0fe] rounded-xl border border-[#dadce0] flex items-center justify-between">
               <div className="space-y-1">
                 <p className="text-xs font-bold uppercase tracking-wider text-[#5f6368]">
-                  Total Tasks Completed
+                  Total Tasks Submitted
+                </p>
+                <p className="text-3xl font-black text-[#202124]">
+                  {ambassador?.taskSubmitted ?? 0}
+                </p>
+              </div>
+              <div className="p-3 bg-blue-100 text-[#1a73e8] rounded-xl border border-blue-200 shadow-sm">
+                <Award className="w-7 h-7" />
+              </div>
+            </div>
+
+            {/* Total Tasks Approved */}
+            <div className="p-5 bg-gradient-to-br from-[#f8f9fa] to-[#e8f0fe] rounded-xl border border-[#dadce0] flex items-center justify-between">
+              <div className="space-y-1">
+                <p className="text-xs font-bold uppercase tracking-wider text-[#5f6368]">
+                  Total Tasks Approved
                 </p>
                 <p className="text-3xl font-black text-[#202124]">
                   {ambassador?.taskCompleted ?? 0}

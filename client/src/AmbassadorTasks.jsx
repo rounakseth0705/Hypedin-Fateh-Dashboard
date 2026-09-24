@@ -364,14 +364,7 @@ function TaskDetailsModal({ task, onClose, onSubmitClick, isSubmitted }) {
         </div>
 
         {/* Modal Footer */}
-        <div className="p-4 border-t border-[#dadce0] bg-[#f8f9fa] flex items-center justify-between shrink-0">
-          <button
-            onClick={onClose}
-            className="px-5 py-2 rounded-xl text-sm font-bold text-[#5f6368] hover:bg-gray-200 transition-colors cursor-pointer"
-          >
-            Close
-          </button>
-          
+        <div className="p-4 border-t border-[#dadce0] bg-[#f8f9fa] flex items-center justify-center shrink-0">
           <button
             onClick={() => !isSubmitted && onSubmitClick(task)}
             disabled={isSubmitted}
