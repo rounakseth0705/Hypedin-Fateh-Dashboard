@@ -205,7 +205,7 @@ const getMySubmissions = async (req: AuthRequest, res: Response) => {
             return res.status(500).json({ success: false, message: "Ambassador not found" });
         }
 
-        const submissions = await SubmissionModel.find({ ambassadorId: ambassador._id }).select("taskId");
+        const submissions = await SubmissionModel.find({ ambassadorId: ambassador._id }).populate("taskId","title");
 
         return res.status(200).json({ success: true, submissions, message: "Submissions fetched" });
     } catch(error: unknown) {
