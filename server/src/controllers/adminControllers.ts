@@ -112,9 +112,9 @@ const getPOCs = async (req: Request, res: Response) => {
 
 const getAmbassadors = async (req: Request, res: Response) => {
     try {
-        const ambassadors = await AmbassadorModel.find({}).populate("userId", "name email");
+        const ambassadors = await AmbassadorModel.find({}).populate("userId", "name email hasChangePassword");
 
-        return res.status(200).json({ success: true, message: "Ambassadors fetched" });
+        return res.status(200).json({ success: true, ambassadors, message: "Ambassadors fetched" });
     } catch(error: unknown) {
         if (error instanceof Error) {
             console.log(error.message);
@@ -374,4 +374,45 @@ const reviewSubmission = async (req: AuthRequest, res: Response) => {
     }
 }
 
-export { createTask, deleteTask, getTasks, getAmbassadors, createReward, allotUTMAndQR, seedAmbassador, seedPOC, getSubmissions, getPOCs, reviewSubmission }
+const deleteAmbassador = async (req: AuthRequest, res: Response) => {
+    try {
+        const {ambassadorId } = req.params;
+
+        if (!ambassadorId) {
+            return res.status(400).json({ success: false, message: "Ambassador not found" });
+        }
+
+        const ambassador = await AmbassadorModel.findById(ambassadorId);
+
+        if (!ambassador) {
+            return res.status(400).json({ success: false, message: "Ambassador not found" });
+        }
+
+        const user = await UserModel.findById(ambassador.userId);
+
+        if (!user) {
+            return res.status(400).json({ success: false, message: "User not found" });
+        }
+
+        if (user.role !== "Ambassador") {
+            return res.status(400).json({ success: false, message: "Something went wrong" });
+        }
+
+        const result = await ambassador.deleteOne();
+
+        if (!result.acknowledged) {
+            return res.status(500).json({ success: false, message: "Couldn't delete ambassador, please try again" });
+        }
+
+        user.status = "Back Out"
+        await user.save();
+
+        return res.status(200).json({ success: true, message: "Ambassador deleted" });
+    } catch(error: unknown) {
+        console.log(error);
+
+        return res.status(500).json({ success: false, message: "Internal Server Error" });
+    }
+}
+
+export { createTask, deleteTask, getTasks, getAmbassadors, createReward, allotUTMAndQR, seedAmbassador, seedPOC, getSubmissions, getPOCs, reviewSubmission, deleteAmbassador }

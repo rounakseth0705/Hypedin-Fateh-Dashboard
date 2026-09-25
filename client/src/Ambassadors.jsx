@@ -7,7 +7,11 @@ import {
   ChevronRight, 
   ChevronsLeft, 
   ChevronsRight,
-  User 
+  Trash2,
+  CheckCircle2,
+  XCircle,
+  CheckCircle,
+  X
 } from "lucide-react";
 import API from "./config/api.js";
 
@@ -21,32 +25,53 @@ export default function Ambassadors() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
-  useEffect(() => {
-    const fetchAmbassadors = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const response = await API.get("/admin/getAmbassadors", { withCredentials: true });
-        // Ensure data is an array
-        setAmbassadors(response.data?.ambassadors || []);
-      } catch (err) {
-        setError("Failed to fetch ambassadors list. Please try again.");
-      } finally {
-        setLoading(false);
-      }
-    };
+  // Deleting State & Modal Controls
+  const [deletingId, setDeletingId] = useState(null);
+  const [selectedForDelete, setSelectedForDelete] = useState(null);
+  const [toast, setToast] = useState(null); // { message, type: 'success' | 'error' }
 
+  useEffect(() => {
     fetchAmbassadors();
   }, []);
 
-  // Filter Logic
+  // Toast Notification Auto-Dismiss
+  useEffect(() => {
+    if (toast) {
+      const timer = setTimeout(() => setToast(null), 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [toast]);
+
+  const fetchAmbassadors = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await API.get("/admin/getAmbassadors", { withCredentials: true });
+      if (response.data?.success) {
+        setAmbassadors(response.data?.ambassadors || []);
+      } else {
+        setError(response.data?.message || "Failed to fetch ambassadors list.");
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to fetch ambassadors list. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Safe Filter Logic
   const filteredData = ambassadors.filter((item) => {
     const search = searchQuery.toLowerCase();
+    const name = item.ambassadorId?.name?.toLowerCase() || "";
+    const email = item.ambassadorId?.email?.toLowerCase() || "";
+    const college = item.college?.toLowerCase() || "";
+    const city = item.city?.toLowerCase() || "";
+
     return (
-      item.userId?.name?.toLowerCase().includes(search) ||
-      item.userId?.email?.toLowerCase().includes(search) ||
-      item.college?.toLowerCase().includes(search) ||
-      item.city?.toLowerCase().includes(search)
+      name.includes(search) ||
+      email.includes(search) ||
+      college.includes(search) ||
+      city.includes(search)
     );
   });
 
@@ -60,18 +85,116 @@ export default function Ambassadors() {
     setCurrentPage(page);
   };
 
-  // Helper for status colors
-  const getStatusStyle = (status) => {
-    switch (status) {
-      case "Approved": return "bg-emerald-50 text-emerald-700 border-emerald-100";
-      case "Pending": return "bg-amber-50 text-amber-700 border-amber-100";
-      case "Reserve": return "bg-blue-50 text-blue-700 border-blue-100";
-      default: return "bg-gray-50 text-gray-700 border-gray-100";
+  // Handle Delete Confirmation Modal Trigger
+  const handleOpenDeleteModal = (e, ambassador) => {
+    e.stopPropagation();
+    setSelectedForDelete(ambassador);
+  };
+
+  // Perform Delete Action
+  const confirmDelete = async () => {
+    if (!selectedForDelete) return;
+
+    const ambassadorId = selectedForDelete._id || selectedForDelete.ambassadorId?._id;
+    setDeletingId(ambassadorId);
+
+    try {
+      const response = await API.delete(`/admin/deleteAmbassador/${ambassadorId}`, {
+        withCredentials: true,
+      });
+
+      if (response.data?.success) {
+        // Remove ambassador from local state
+        setAmbassadors((prev) => prev.filter((item) => (item._id || item.ambassadorId?._id) !== ambassadorId));
+        setToast({
+          type: "success",
+          message: response.data?.message || "Ambassador deleted successfully.",
+        });
+      } else {
+        setToast({
+          type: "error",
+          message: response.data?.message || "Failed to delete ambassador.",
+        });
+      }
+    } catch (err) {
+      setToast({
+        type: "error",
+        message: err.response?.data?.message || "An error occurred while deleting.",
+      });
+    } finally {
+      setDeletingId(null);
+      setSelectedForDelete(null);
     }
   };
 
   return (
-    <div className="p-8">
+    <div className="p-8 relative">
+      {/* Notification Toast */}
+      {toast && (
+        <div className="fixed top-5 right-5 z-50 animate-in fade-in slide-in-from-top-4 duration-300">
+          <div
+            className={`flex items-center gap-3 px-4 py-3 rounded-xl border shadow-lg text-sm ${
+              toast.type === "success"
+                ? "bg-emerald-50 border-emerald-200 text-emerald-800"
+                : "bg-red-50 border-red-200 text-red-800"
+            }`}
+          >
+            {toast.type === "success" ? (
+              <CheckCircle className="w-5 h-5 text-emerald-600" />
+            ) : (
+              <AlertCircle className="w-5 h-5 text-red-600" />
+            )}
+            <span className="font-medium">{toast.message}</span>
+            <button
+              onClick={() => setToast(null)}
+              className="ml-2 hover:opacity-70 transition-opacity"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Confirmation Modal */}
+      {selectedForDelete && (
+        <div className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl p-6 max-w-md w-full shadow-xl border border-[#dadce0] animate-in zoom-in-95 duration-200">
+            <h3 className="text-lg font-bold text-[#202124] mb-2">Delete Ambassador</h3>
+            <p className="text-sm text-[#5f6368] mb-6">
+              Are you sure you want to delete{" "}
+              <strong className="text-[#202124]">
+                {selectedForDelete.ambassadorId?.email || "this ambassador"}
+              </strong>
+              ? This action cannot be undone.
+            </p>
+
+            <div className="flex items-center justify-end gap-3">
+              <button
+                disabled={Boolean(deletingId)}
+                onClick={() => setSelectedForDelete(null)}
+                className="px-4 py-2 rounded-xl border border-[#dadce0] text-sm font-semibold text-[#5f6368] hover:bg-[#f8f9fa] transition-colors disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                disabled={Boolean(deletingId)}
+                onClick={confirmDelete}
+                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-red-600 text-white text-sm font-semibold hover:bg-red-700 transition-colors disabled:opacity-50"
+              >
+                {deletingId ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Deleting...
+                  </>
+                ) : (
+                  "Delete"
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-[#202124]">Ambassadors</h1>
@@ -110,39 +233,93 @@ export default function Ambassadors() {
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="bg-[#f8f9fa] border-b border-[#dadce0] text-[11px] font-bold uppercase tracking-wider text-[#5f6368]">
-                    <th className="py-4 px-6">Ambassador</th>
+                    <th className="py-4 px-6">Email</th>
                     <th className="py-4 px-6">College</th>
                     <th className="py-4 px-6">City</th>
-                    <th className="py-4 px-6">Performance</th>
-                    <th className="py-4 px-6 text-center">Status</th>
+                    <th className="py-4 px-6">Submissions</th>
+                    <th className="py-4 px-6 text-center">Logged In</th>
+                    <th className="py-4 px-6 text-center">Action</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#dadce0]">
                   {currentItems.length > 0 ? (
-                    currentItems.map((amb) => (
-                      <tr key={amb._id} className="hover:bg-[#f8f9fa] transition-colors">
-                        <td className="py-4 px-6">
-                          <div className="font-semibold text-[#202124] text-sm">{amb.userId?.name || "N/A"}</div>
-                          <div className="text-[11px] text-[#5f6368]">{amb.userId?.email || "N/A"}</div>
-                        </td>
-                        <td className="py-4 px-6 text-sm text-[#202124]">{amb.college}</td>
-                        <td className="py-4 px-6 text-sm text-[#202124]">{amb.city}</td>
-                        <td className="py-4 px-6 text-sm">
-                          <div className="flex gap-4">
-                            <span><strong className="text-[#1a73e8]">{amb.points}</strong> pts</span>
-                            <span><strong className="text-[#1a73e8]">{amb.taskCompleted}</strong> tasks</span>
-                          </div>
-                        </td>
-                        <td className="py-4 px-6 text-center">
-                          <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold border ${getStatusStyle(amb.status)}`}>
-                            {amb.status}
-                          </span>
-                        </td>
-                      </tr>
-                    ))
+                    currentItems.map((amb, index) => {
+                      const id = amb._id || amb.ambassadorId?._id || index;
+                      const isDeletingThis = deletingId === id;
+
+                      return (
+                        <tr key={id} className="hover:bg-[#f8f9fa] transition-colors">
+                          {/* Email Column */}
+                          <td className="py-4 px-6">
+                            <div className="font-semibold text-[#202124] text-sm">
+                              {amb.ambassadorId?.email || "N/A"}
+                            </div>
+                            {amb.ambassadorId?.name && (
+                              <div className="text-[11px] text-[#5f6368]">
+                                {amb.ambassadorId.name}
+                              </div>
+                            )}
+                          </td>
+
+                          {/* College */}
+                          <td className="py-4 px-6 text-sm text-[#202124]">
+                            {amb.college || "N/A"}
+                          </td>
+
+                          {/* City */}
+                          <td className="py-4 px-6 text-sm text-[#202124]">
+                            {amb.city || "N/A"}
+                          </td>
+
+                          {/* Task Submitted Count */}
+                          <td className="py-4 px-6 text-sm">
+                            <span className="inline-flex items-center gap-1 font-medium text-[#202124]">
+                              <strong className="text-[#1a73e8]">{amb.taskSubmitted ?? 0}</strong> tasks submitted
+                            </span>
+                          </td>
+
+                          {/* Logged In Column (hasChangePassword) */}
+                          <td className="py-4 px-6 text-center">
+                            <span
+                              className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold border ${
+                                amb.ambassadorId?.hasChangePassword
+                                  ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                                  : "bg-amber-50 text-amber-700 border-amber-200"
+                              }`}
+                            >
+                              {amb.ambassadorId?.hasChangePassword ? (
+                                <>
+                                  <CheckCircle2 className="w-3 h-3" /> Yes
+                                </>
+                              ) : (
+                                <>
+                                  <XCircle className="w-3 h-3" /> No
+                                </>
+                              )}
+                            </span>
+                          </td>
+
+                          {/* Delete Action */}
+                          <td className="py-4 px-6 text-center">
+                            <button
+                              disabled={isDeletingThis}
+                              onClick={(e) => handleOpenDeleteModal(e, amb)}
+                              title="Delete Ambassador"
+                              className="p-2 text-[#5f6368] hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
+                            >
+                              {isDeletingThis ? (
+                                <Loader2 className="w-4 h-4 animate-spin text-red-600" />
+                              ) : (
+                                <Trash2 className="w-4 h-4" />
+                              )}
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })
                   ) : (
                     <tr>
-                      <td colSpan="5" className="py-10 text-center text-sm text-[#5f6368]">
+                      <td colSpan="6" className="py-10 text-center text-sm text-[#5f6368]">
                         No ambassadors found matching your search.
                       </td>
                     </tr>
@@ -161,28 +338,28 @@ export default function Ambassadors() {
                   <button 
                     disabled={currentPage === 1}
                     onClick={() => handlePageChange(1)}
-                    className="p-2 rounded-lg hover:bg-[#dadce0] disabled:opacity-30"
+                    className="p-2 rounded-lg hover:bg-[#dadce0] disabled:opacity-30 transition-colors"
                   >
                     <ChevronsLeft className="w-4 h-4" />
                   </button>
                   <button 
                     disabled={currentPage === 1}
                     onClick={() => handlePageChange(currentPage - 1)}
-                    className="p-2 rounded-lg hover:bg-[#dadce0] disabled:opacity-30"
+                    className="p-2 rounded-lg hover:bg-[#dadce0] disabled:opacity-30 transition-colors"
                   >
                     <ChevronLeft className="w-4 h-4" />
                   </button>
                   <button 
                     disabled={currentPage === totalPages}
                     onClick={() => handlePageChange(currentPage + 1)}
-                    className="p-2 rounded-lg hover:bg-[#dadce0] disabled:opacity-30"
+                    className="p-2 rounded-lg hover:bg-[#dadce0] disabled:opacity-30 transition-colors"
                   >
                     <ChevronRight className="w-4 h-4" />
                   </button>
                   <button 
                     disabled={currentPage === totalPages}
                     onClick={() => handlePageChange(totalPages)}
-                    className="p-2 rounded-lg hover:bg-[#dadce0] disabled:opacity-30"
+                    className="p-2 rounded-lg hover:bg-[#dadce0] disabled:opacity-30 transition-colors"
                   >
                     <ChevronsRight className="w-4 h-4" />
                   </button>

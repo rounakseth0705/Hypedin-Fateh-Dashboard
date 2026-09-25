@@ -1,7 +1,7 @@
 import express from "express";
 import { authMiddleware } from "../middlewares/auth.js";
 import { verifyAccess } from "../middlewares/role.js";
-import { createReward, createTask, deleteTask, getAmbassadors, getPOCs, getSubmissions, getTasks, seedAmbassador, seedPOC, reviewSubmission } from "../controllers/adminControllers.js";
+import { createReward, createTask, deleteTask, getAmbassadors, getPOCs, getSubmissions, getTasks, seedAmbassador, seedPOC, reviewSubmission, deleteAmbassador } from "../controllers/adminControllers.js";
 
 const adminRouter = express.Router();
 
@@ -15,5 +15,6 @@ adminRouter.get("/getTasks", authMiddleware, verifyAccess("Admin"), getTasks);
 adminRouter.get("/getSubmissions", authMiddleware, verifyAccess("Admin"), getSubmissions);
 adminRouter.get("/getPOCs", authMiddleware, verifyAccess("Admin"), getPOCs);
 adminRouter.put("/reviewSubmission", authMiddleware, verifyAccess("Admin"), reviewSubmission);
+adminRouter.delete("/deleteAmbassador/:ambassadorId", authMiddleware, verifyAccess("Admin"), deleteAmbassador);
 
 export default adminRouter;
