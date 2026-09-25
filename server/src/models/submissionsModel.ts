@@ -4,7 +4,7 @@ interface ISubmissions extends mongoose.Document {
     ambassadorId: mongoose.Types.ObjectId,
     taskId: mongoose.Types.ObjectId,
     proofURLs: string[],
-    status: "Pending" | "Approved" | "Rejected",
+    status: "Pending" | "Approved" | "Rejected" | "ReSubmitted",
     adminFeedback?: string,
     remarks?: string,
     reviewedBy?: mongoose.Types.ObjectId,

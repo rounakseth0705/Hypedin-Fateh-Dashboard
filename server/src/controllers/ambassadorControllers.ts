@@ -7,7 +7,7 @@ import { drive } from "../utils/googleDrive.js";
 import UserModel from "../models/userModel.js";
 import AmbassadorModel from "../models/ambassadorModel.js";
 import SubmissionModel from "../models/submissionsModel.js";
-import { logToGoogleSheets } from "../utils/googleSheets.js";
+import { updateTwoValuesBasedOnOneValueInSheets, logToGoogleSheets } from "../utils/googleSheets.js";
 
 const submitTask = async (req: AuthRequest, res: Response) => {
     let submission;
@@ -98,7 +98,7 @@ const submitTask = async (req: AuthRequest, res: Response) => {
         }
 
         let rawProofURLs: string = submission.proofURLs.join(", ");
-        const result: boolean = await logToGoogleSheets(googleSheetId,[user.email, user.phoneNo, task.title, rawProofURLs]);
+        const result: boolean = await logToGoogleSheets(googleSheetId,[submission._id.toString(), user.email, user.phoneNo, task.title, rawProofURLs, submission.status]);
 
         if (!result) {
             throw new Error("Submission Failed, please try again");
@@ -215,4 +215,104 @@ const getMySubmissions = async (req: AuthRequest, res: Response) => {
     }
 }
 
-export { submitTask, getTasks, getRewards, createAmbassadorAccount, getMySubmissions }
+const reSubmitTask = async (req: AuthRequest, res: Response) => {
+    try {
+        const { proofURLs } = req.body;
+        const { taskId } = req.params;
+        const userId = req.userId;
+        const files = req.files as Express.Multer.File[];
+
+        if (!proofURLs || !taskId || !userId) {
+            return res.status(400).json({ success: false, message: "Details missing" });
+        }
+
+        const user = await UserModel.findById(userId);
+
+        if (!user) {
+            return res.status(500).json({ success: false, message: "User not found" });
+        }
+
+        const ambassador = await AmbassadorModel.findOne({ userId });
+
+        if (!ambassador) {
+            return res.status(400).json({ success: false, message: "Ambassador not found" });
+        }
+
+        const task = await TaskModel.findById(taskId);
+
+        if (!task) {
+            return res.status(400).json({ success: false, message: "Task not found" });
+        }
+        
+        if ((task.isImageAllowed || task.isVideoAllowed) && !files) {
+            return res.status(400).json({ success: false, message: "Documents required" });
+        } else if ((!task.isImageAllowed && !task.isVideoAllowed) && files) {
+            return res.status(400).json({ success: false, message: "Document not required" });
+        }
+
+        const existingSubmission = await SubmissionModel.findOne({ ambassadorId: ambassador._id, taskId });
+
+        if (!existingSubmission || existingSubmission.status !== "Rejected") {
+            return res.status(400).json({ success: false, message: "Re submission failed" });
+        }
+
+        const DRIVE_FOLDER_ID = process.env.GOOGLE_DRIVE_FOLDER_ID_SUBMISSIONS as string;
+
+        if (files) {
+            if (!DRIVE_FOLDER_ID) {
+                throw new Error("DRIVE FOLDER NOT FOUND");
+            }
+            for (const file of files) {
+                const bufferStream = Readable.from(file.buffer);
+
+                const driveResponse = await drive.files.create({
+                    requestBody: {
+                        name: `${user.name}_${user._id}`,
+                        parents: [DRIVE_FOLDER_ID],
+                    },
+                    media: {
+                        mimeType: file.mimetype,
+                        body: bufferStream,
+                    },
+                    fields: 'id, webViewLink',
+                });
+
+                const { id: fileId, webViewLink } = driveResponse.data;
+
+                if (fileId && webViewLink) {
+                    await drive.permissions.create({
+                        fileId,
+                        requestBody: { role: 'reader', type: 'anyone' },
+                    });
+                    
+                    proofURLs.push(webViewLink);
+                }
+            }
+        }
+
+        existingSubmission.proofURLs = proofURLs;
+        existingSubmission.status = "ReSubmitted";
+        await existingSubmission.save();
+
+        const googleSheetId: string | undefined = process.env.GOOGLE_SHEETS_ID_SUBMISSION;
+
+        if (!googleSheetId) {
+            throw new Error("Submission Failed, please try again");
+        }
+
+        let rawProofURLs: string = existingSubmission.proofURLs.join(", ");
+        const result: boolean = await updateTwoValuesBasedOnOneValueInSheets(googleSheetId, 0, existingSubmission._id.toString(), "E", rawProofURLs, "F", existingSubmission.status);
+
+        if (!result) {
+            throw new Error("Submission Failed, please try again");
+        }
+
+        return res.status(200).json({ success: true, message: "Task Submitted" });
+    } catch(error: unknown) {
+        console.log(error);
+
+        return res.status(500).json({ success: false, message: "Internal Server Error" });
+    }
+}
+
+export { submitTask, getTasks, getRewards, createAmbassadorAccount, getMySubmissions, reSubmitTask }

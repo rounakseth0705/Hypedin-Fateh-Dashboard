@@ -10,6 +10,7 @@ import { nanoid } from "nanoid";
 import POCModel from "../models/pocModel.js";
 import { sendWelcomeMail } from "../utils/mailer.js";
 import SubmissionModel from "../models/submissionsModel.js";
+import { updateOneValueBasedOnOneValueInSheets } from "../utils/googleSheets.js";
 
 const createTask = async (req: AuthRequest, res: Response) => {
     try {
@@ -361,6 +362,14 @@ const reviewSubmission = async (req: AuthRequest, res: Response) => {
             }
             await ambassador.save();
         }
+
+        const googleSheetId: string | undefined = process.env.GOOGLE_SHEETS_ID_SUBMISSION;
+
+        if (!googleSheetId) {
+            throw new Error("Submission review failed, please try again");
+        }
+
+        await updateOneValueBasedOnOneValueInSheets(googleSheetId, submission._id.toString(), "A", "F", adminReview);
 
         if (adminReview === "Approved") {
             return res.status(200).json({ success: true, message: "Submission approved" });
