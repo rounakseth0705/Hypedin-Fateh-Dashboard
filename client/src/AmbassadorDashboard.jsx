@@ -174,6 +174,10 @@ export default function AmbassadorDashboard() {
   // Filter tasks based ONLY on the selected Phase
   const filteredTasks = tasks.filter((task) => task.taskMonth === activePhaseId);
 
+  // Submitted tasks array from context (fallback to empty array if undefined)
+  const submittedTasksList = ambassador?.submittedTasks || [];
+  const completedCount = submittedTasksList.length;
+
   return (
     <div className="min-h-screen bg-[#f0f4f9] text-[#1f1f1f] font-sans pb-16 relative">
       {/* Set Password Popup Modal */}
@@ -321,7 +325,9 @@ export default function AmbassadorDashboard() {
             <div className="flex flex-col items-center justify-center text-center p-2">
               <Percent className="w-6 h-6 text-[#1a73e8] mb-0.5" />
               <span className="text-3xl font-extrabold text-[#202124] tracking-tight">
-                {((ambassador?.taskCompleted || 0) / filteredTasks.length) * 100}
+                {filteredTasks.length > 0
+                  ? Math.round((completedCount / filteredTasks.length) * 100)
+                  : 0}
               </span>
               <span className="text-[10px] font-bold uppercase tracking-wider text-[#5f6368] mt-0.5">
                 Task Submission Percentage
@@ -329,14 +335,11 @@ export default function AmbassadorDashboard() {
             </div>
           </div>
 
-          {ambassador?.taskCompleted !== undefined && (
-            <div className="mt-3 flex items-center gap-1.5 text-xs font-semibold text-[#5f6368] bg-white px-3.5 py-1.5 rounded-full border border-[#dadce0] shadow-2xs">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-              <span>Tasks Completed:</span>
-              <span className="text-[#1a73e8] font-bold">{ambassador.taskCompleted}</span>
-            </div>
-          )}
-          
+          <div className="mt-3 flex items-center gap-1.5 text-xs font-semibold text-[#5f6368] bg-white px-3.5 py-1.5 rounded-full border border-[#dadce0] shadow-2xs">
+            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+            <span>Tasks Completed:</span>
+            <span className="text-[#1a73e8] font-bold">{completedCount}</span>
+          </div>
         </div>
 
         {/* Banner Section */}
@@ -445,7 +448,6 @@ export default function AmbassadorDashboard() {
                   <tr className="bg-[#f8f9fa] border-b border-[#dadce0] text-[11px] font-bold uppercase tracking-wider text-[#5f6368]">
                     <th className="py-3.5 px-6">Task Title</th>
                     <th className="py-3.5 px-6">Periodicity</th>
-                    {/* <th className="py-3.5 px-6">Target</th> */}
                     <th className="py-3.5 px-6">Allowed Media</th>
                     <th className="py-3.5 px-6">Deadline</th>
                     <th className="py-3.5 px-6 text-right">Status</th>
@@ -453,7 +455,8 @@ export default function AmbassadorDashboard() {
                 </thead>
                 <tbody className="divide-y divide-[#dadce0] text-xs text-[#202124]">
                   {filteredTasks.map((task, idx) => {
-                    const isCompleted = ambassador?.completedTasks?.includes(task._id);
+                    // Check if task ID exists inside ambassador.submittedTasks array
+                    const isCompleted = submittedTasksList.includes(task._id);
 
                     // Find corresponding deadline object
                     const matchedDeadlineObj = deadlines.find((d) => d._id === task._id);
@@ -485,12 +488,6 @@ export default function AmbassadorDashboard() {
                             {task.periodicity || "N/A"}
                           </span>
                         </td>
-                        {/* <td className="py-4 px-6">
-                          <div className="flex items-center gap-1.5 text-[#5f6368]">
-                            <Target className="w-3.5 h-3.5 text-[#1a73e8]" />
-                            <span className="font-semibold text-[#202124]">{task.target || "No Minimum"}</span>
-                          </div>
-                        </td> */}
                         <td className="py-4 px-6">
                           <div className="flex items-center gap-2">
                             {task.isImageAllowed && (
@@ -524,7 +521,7 @@ export default function AmbassadorDashboard() {
                           </span>
                         </td>
                         <td className={`py-4 px-6 text-right font-bold text-sm ${isCompleted ? "text-emerald-600" : "text-[#1a73e8]"}`}>
-                          {isCompleted ? "Completed" : "Pending"}
+                          {isCompleted ? "Submitted" : "Pending"}
                         </td>
                       </tr>
                     );
