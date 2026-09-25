@@ -59,11 +59,11 @@ export default function Ambassadors() {
     }
   };
 
-  // Safe Filter Logic
+  // Safe Filter Logic updated for userId schema
   const filteredData = ambassadors.filter((item) => {
     const search = searchQuery.toLowerCase();
-    const name = item.ambassadorId?.name?.toLowerCase() || "";
-    const email = item.ambassadorId?.email?.toLowerCase() || "";
+    const name = item.userId?.name?.toLowerCase() || "";
+    const email = item.userId?.email?.toLowerCase() || "";
     const college = item.college?.toLowerCase() || "";
     const city = item.city?.toLowerCase() || "";
 
@@ -95,17 +95,17 @@ export default function Ambassadors() {
   const confirmDelete = async () => {
     if (!selectedForDelete) return;
 
-    const ambassadorId = selectedForDelete._id || selectedForDelete.ambassadorId?._id;
-    setDeletingId(ambassadorId);
+    const targetId = selectedForDelete._id || selectedForDelete.userId?._id;
+    setDeletingId(targetId);
 
     try {
-      const response = await API.delete(`/admin/deleteAmbassador/${ambassadorId}`, {
+      const response = await API.delete(`/admin/deleteAmbassador/${targetId}`, {
         withCredentials: true,
       });
 
       if (response.data?.success) {
         // Remove ambassador from local state
-        setAmbassadors((prev) => prev.filter((item) => (item._id || item.ambassadorId?._id) !== ambassadorId));
+        setAmbassadors((prev) => prev.filter((item) => (item._id || item.userId?._id) !== targetId));
         setToast({
           type: "success",
           message: response.data?.message || "Ambassador deleted successfully.",
@@ -163,7 +163,7 @@ export default function Ambassadors() {
             <p className="text-sm text-[#5f6368] mb-6">
               Are you sure you want to delete{" "}
               <strong className="text-[#202124]">
-                {selectedForDelete.ambassadorId?.email || "this ambassador"}
+                {selectedForDelete.userId?.email || "this ambassador"}
               </strong>
               ? This action cannot be undone.
             </p>
@@ -244,7 +244,7 @@ export default function Ambassadors() {
                 <tbody className="divide-y divide-[#dadce0]">
                   {currentItems.length > 0 ? (
                     currentItems.map((amb, index) => {
-                      const id = amb._id || amb.ambassadorId?._id || index;
+                      const id = amb._id || amb.userId?._id || index;
                       const isDeletingThis = deletingId === id;
 
                       return (
@@ -252,11 +252,11 @@ export default function Ambassadors() {
                           {/* Email Column */}
                           <td className="py-4 px-6">
                             <div className="font-semibold text-[#202124] text-sm">
-                              {amb.ambassadorId?.email || "N/A"}
+                              {amb.userId?.email || "N/A"}
                             </div>
-                            {amb.ambassadorId?.name && (
+                            {amb.userId?.name && (
                               <div className="text-[11px] text-[#5f6368]">
-                                {amb.ambassadorId.name}
+                                {amb.userId.name}
                               </div>
                             )}
                           </td>
@@ -282,12 +282,12 @@ export default function Ambassadors() {
                           <td className="py-4 px-6 text-center">
                             <span
                               className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold border ${
-                                amb.ambassadorId?.hasChangePassword
+                                amb.userId?.hasChangePassword
                                   ? "bg-emerald-50 text-emerald-700 border-emerald-200"
                                   : "bg-amber-50 text-amber-700 border-amber-200"
                               }`}
                             >
-                              {amb.ambassadorId?.hasChangePassword ? (
+                              {amb.userId?.hasChangePassword ? (
                                 <>
                                   <CheckCircle2 className="w-3 h-3" /> Yes
                                 </>
