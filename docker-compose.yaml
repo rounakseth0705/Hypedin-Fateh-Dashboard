@@ -1,3 +1,135 @@
+# # services:
+# #   backend:
+# #     container_name: hypedin-fateh_backend
+# #     build:
+# #       context: ./server
+# #       dockerfile: Dockerfile
+# #     environment:
+# #       FRONTEND_URL: ${FRONTEND_URL}
+# #       PORT: ${PORT}
+# #       MONGO_URI: ${MONGO_URI}
+# #       GOOGLE_DRIVE_FOLDER_ID: ${GOOGLE_DRIVE_FOLDER_ID}
+# #       NODE_ENV: ${NODE_ENV}
+# #       JWT_SECRET: ${JWT_SECRET}
+# #       GOOGLE_REFRESH_TOKEN: ${GOOGLE_REFRESH_TOKEN}
+# #       GOOGLE_CLIENT_ID: ${GOOGLE_CLINET_ID}
+# #       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+# #       GOOGLE_REDIRECT_URI: ${GOOGLE_REDIRECT_URI}
+# #     restart: unless-stopped
+# #     networks:
+# #       - hypedin-fateh_network
+# #     deploy:
+# #       resources:
+# #         limits:
+# #           memory: 2GB
+# #     logging:
+# #       driver: "json-file"
+# #       options:
+# #         max-size: "10m"
+# #         max-file: "3"
+  
+# #   frontend:
+# #     container_name: hypedin-fateh_frontend
+# #     build:
+# #       context: ./client
+# #       dockerfile: Dockerfile
+# #       args:
+# #         VITE_BACKEND_URL: ${VITE_BACKEND_URL}
+# #     restart: unless-stopped
+# #     networks:
+# #       - hypedin-fateh_network
+# #     deploy:
+# #       resources:
+# #         limits:
+# #           memory: 1GB
+
+# # networks:
+# #   hypedin-fateh_network:
+# #     driver: bridge
+
+
+# services:
+#   backend:
+#     container_name: hypedin-fateh_backend
+#     build:
+#       context: ./server
+#       dockerfile: Dockerfile
+#     environment:
+#       FRONTEND_URL: ${FRONTEND_URL}
+#       PORT: ${PORT}
+#       MONGO_URI: ${MONGO_URI}
+#       GOOGLE_DRIVE_FOLDER_ID: ${GOOGLE_DRIVE_FOLDER_ID}
+#       NODE_ENV: ${NODE_ENV}
+#       JWT_SECRET: ${JWT_SECRET}
+#       GOOGLE_REFRESH_TOKEN: ${GOOGLE_REFRESH_TOKEN}
+#       GOOGLE_CLIENT_ID: ${GOOGLE_CLINET_ID}
+#       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+#       GOOGLE_REDIRECT_URI: ${GOOGLE_REDIRECT_URI}
+#     restart: unless-stopped
+#     networks:
+#       - hypedin-fateh_network
+#     deploy:
+#       resources:
+#         limits:
+#           memory: 2GB
+#     logging:
+#       driver: "json-file"
+#       options:
+#         max-size: "10m"
+#         max-file: "3"
+  
+#   frontend:
+#     container_name: hypedin-fateh_frontend
+#     build:
+#       context: ./client
+#       dockerfile: Dockerfile
+#       args:
+#         VITE_BACKEND_URL: ${VITE_BACKEND_URL}
+#     restart: unless-stopped
+#     networks:
+#       - hypedin-fateh_network
+#     deploy:
+#       resources:
+#         limits:
+#           memory: 1GB
+
+#   mongodb:
+#     container_name: hypedin-mongodb
+#     image: mongo:8
+#     restart: unless-stopped
+#     environment:
+#       MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME}
+#       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+#     volumes:
+#       - mongodb_data:/data/db
+#     networks:
+#       - hypedin-fateh_network
+
+#   mongo-express:
+#     container_name: hypedin-mongo-express
+#     image: mongo-express:1.0.2
+#     restart: unless-stopped
+#     ports:
+#       - "8081:8081"
+#     environment:
+#       ME_CONFIG_MONGODB_URL: mongodb://${MONGO_ROOT_USERNAME}:${MONGO_ROOT_PASSWORD}@mongodb:27017/
+#       ME_CONFIG_BASICAUTH_ENABLED: "true"
+#       ME_CONFIG_BASICAUTH_USERNAME: ${MONGO_EXPRESS_USERNAME}
+#       ME_CONFIG_BASICAUTH_PASSWORD: ${MONGO_EXPRESS_PASSWORD}
+#     depends_on:
+#       - mongodb
+#     networks:
+#       - hypedin-fateh_network
+
+# volumes:
+#   mongodb_data:
+
+# networks:
+#   hypedin-fateh_network:
+#     driver: bridge
+
+
+
 services:
   backend:
     container_name: hypedin-fateh_backend
@@ -27,14 +159,14 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
-  
+        
   frontend:
     container_name: hypedin-fateh_frontend
     build:
       context: ./client
       dockerfile: Dockerfile
-      args:
-        VITE_BACKEND_URL: ${VITE_BACKEND_URL}
+    args:
+      VITE_BACKEND_URL: ${VITE_BACKEND_URL}
     restart: unless-stopped
     networks:
       - hypedin-fateh_network
@@ -42,6 +174,37 @@ services:
       resources:
         limits:
           memory: 1GB
+
+  mongodb:
+    container_name: hypedin-mongodb
+    image: mongo:8
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - hypedin-fateh_network
+
+  mongo-express:
+    container_name: hypedin-mongo-express
+    image: mongo-express:1.0.2
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_URL: mongodb://${MONGO_ROOT_USERNAME}:${MONGO_ROOT_PASSWORD}@mongodb:27017/?authSource=admin
+      ME_CONFIG_BASICAUTH_ENABLED: "true"
+      ME_CONFIG_BASICAUTH_USERNAME: ${MONGO_EXPRESS_USERNAME}
+      ME_CONFIG_BASICAUTH_PASSWORD: ${MONGO_EXPRESS_PASSWORD}
+    depends_on:
+      - mongodb
+    networks:
+      - hypedin-fateh_network
+
+volumes:
+  mongodb_data:
 
 networks:
   hypedin-fateh_network:
