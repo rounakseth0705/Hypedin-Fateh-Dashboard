@@ -10,6 +10,8 @@ interface IUser extends mongoose.Document {
     role: "Ambassador" | "Admin" | "POC",
     hasChangePassword: boolean,
     status: "Active" | "Back Out",
+    isProfilePictureSet: boolean,
+    profilePictureLink?: string,
     comparePassword(password: string): Promise<boolean| null>,
     createJWT(): Promise<string | null>
 }
@@ -21,7 +23,9 @@ const userSchema = new mongoose.Schema({
     password: { type: String, required: true, select: false },
     role: { type: String, required: true, default: "Ambassador" },
     hasChangePassword: { type: Boolean, required: true, default: false },
-    status: { type: String, required: true, default: "Active" }
+    status: { type: String, required: true, default: "Active" },
+    isProfilePictureSet: { type: Boolean, required: true, default: false },
+    profilePictureLink: { type: String }
 },{ timestamps: true });
 
 userSchema.pre("save", async function() {
