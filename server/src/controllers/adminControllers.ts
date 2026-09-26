@@ -250,7 +250,7 @@ const seedAmbassador = async (req: AuthRequest, res: Response) => {
 
         const id = nanoid(10);
 
-        const user = await UserModel.create({ name, email, phoneNo, role: "Ambassador", password: id, hasChangePassword: false });
+        const user = await UserModel.create({ name, email, phoneNo, role: "Ambassador", password: id, hasChangePassword: false, isProfilePictureSet: false });
 
         const POC = await POCModel.findOne({ phoneNo: POCPhoneNo });
 
@@ -318,16 +318,8 @@ const reviewSubmission = async (req: AuthRequest, res: Response) => {
         if (!submission) {
             return res.status(400).json({ success: false, message: "Submission not found" });
         }
-        
-        submission.status = adminReview;
-        if (adminFeedback) {
-            submission.adminFeedback = adminFeedback;
-        }
-        submission.reviewedBy = user._id;
-        submission.reviewedOn = new Date();
-        await submission.save();
 
-        if (adminReview === "Approved" && submission.status === "Pending") {
+        if (adminReview === "Approved" && (submission.status === "Pending" || submission.status === "ReSubmitted")) {
             const ambassador = await AmbassadorModel.findById(submission.ambassadorId);
 
             if (!ambassador) {
@@ -360,8 +352,35 @@ const reviewSubmission = async (req: AuthRequest, res: Response) => {
             if (index !== -1) {
                 ambassador.completedTasks.splice(index,1);
             }
+
             await ambassador.save();
         }
+
+        if (adminReview === "Approved" && submission.status === "Rejected") {
+            const ambassador = await AmbassadorModel.findById(submission.ambassadorId);
+
+            if (!ambassador) {
+                return res.status(500).json({ success: false, message: "Ambassador not found" });
+            }
+
+            ambassador.taskCompleted = (ambassador.taskCompleted || 0) + 1;
+            if (!Array.isArray(ambassador.completedTasks)) {
+                ambassador.completedTasks = [];
+            }
+
+            ambassador.completedTasks.push(submission.taskId);
+            await ambassador.save();
+        }
+
+        submission.status = adminReview;
+
+        if (adminFeedback) {
+            submission.adminFeedback = adminFeedback;
+        }
+
+        submission.reviewedBy = user._id;
+        submission.reviewedOn = new Date();
+        await submission.save();
 
         const googleSheetId: string | undefined = process.env.GOOGLE_SHEETS_ID_SUBMISSION;
 
