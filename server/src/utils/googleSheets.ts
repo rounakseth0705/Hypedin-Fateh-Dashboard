@@ -245,4 +245,59 @@ const updateTwoValuesBasedOnOneValueInSheets = async (sheetsId: string, searchCo
     }
 };
 
-export { logToGoogleSheets, readFromSheets, updateTwoValuesBasedOnOneValueInSheets, updateOneValueBasedOnOneValueInSheets }
+const updateThreeValuesBasedOnOneValueInSheets = async (sheetsId: string, searchColumn: number, searchValue: string, updateColumn1: string, newValue1: string, updateColumn2: string, newValue2: string, updateColumn3: string, newValue3: string
+): Promise<boolean> => {
+    try {
+        const response = await sheets.spreadsheets.values.get({
+            spreadsheetId: sheetsId,
+            range: "Sheet1!A:D"
+        });
+
+        const rows = response.data.values || [];
+
+        // Find the row
+        const rowIndex = rows.findIndex((row, index) => {
+            if (index === 0) return false; // Skip header
+
+            return row[searchColumn] === searchValue;
+        });
+
+        if (rowIndex === -1) {
+            console.log("Matching row not found");
+            return false;
+        }
+
+        const rowNumber = rowIndex + 1;
+
+        // Update three cells
+        await sheets.spreadsheets.values.batchUpdate({
+            spreadsheetId: sheetsId,
+            requestBody: {
+                valueInputOption: "USER_ENTERED",
+                data: [
+                    {
+                        range: `Sheet1!${updateColumn1}${rowNumber}`,
+                        values: [[newValue1]]
+                    },
+                    {
+                        range: `Sheet1!${updateColumn2}${rowNumber}`,
+                        values: [[newValue2]]
+                    },
+                    {
+                        range: `Sheet1!${updateColumn3}${rowNumber}`,
+                        values: [[newValue3]]
+                    }
+                ]
+            }
+        });
+
+        return true;
+
+    } catch (error: unknown) {
+        console.log(error);
+
+        return false;
+    }
+};
+
+export { logToGoogleSheets, readFromSheets, updateTwoValuesBasedOnOneValueInSheets, updateOneValueBasedOnOneValueInSheets, updateThreeValuesBasedOnOneValueInSheets }

@@ -388,7 +388,11 @@ const reviewSubmission = async (req: AuthRequest, res: Response) => {
             throw new Error("Submission review failed, please try again");
         }
 
-        await updateOneValueBasedOnOneValueInSheets(googleSheetId, submission._id.toString(), "A", "F", adminReview);
+        if (submission.proofURLs.length > 1) {
+            await updateOneValueBasedOnOneValueInSheets(googleSheetId, submission._id.toString(), "A", "G", adminReview);
+        } else {
+            await updateOneValueBasedOnOneValueInSheets(googleSheetId, submission._id.toString(), "A", "F", adminReview);
+        }
 
         if (adminReview === "Approved") {
             return res.status(200).json({ success: true, message: "Submission approved" });

@@ -7,7 +7,7 @@ import { drive } from "../utils/googleDrive.js";
 import UserModel from "../models/userModel.js";
 import AmbassadorModel from "../models/ambassadorModel.js";
 import SubmissionModel from "../models/submissionsModel.js";
-import { updateTwoValuesBasedOnOneValueInSheets, logToGoogleSheets } from "../utils/googleSheets.js";
+import { updateTwoValuesBasedOnOneValueInSheets, logToGoogleSheets, updateThreeValuesBasedOnOneValueInSheets } from "../utils/googleSheets.js";
 
 const submitTask = async (req: AuthRequest, res: Response) => {
     let submission;
@@ -316,8 +316,24 @@ const reSubmitTask = async (req: AuthRequest, res: Response) => {
             throw new Error("Submission Failed, please try again");
         }
 
-        let rawProofURLs: string = existingSubmission.proofURLs.join(", ");
-        const result: boolean = await updateTwoValuesBasedOnOneValueInSheets(googleSheetId, 0, existingSubmission._id.toString(), "E", rawProofURLs, "F", existingSubmission.status);
+        if (existingSubmission.proofURLs.length < 1) {
+            throw new Error("No Submission links found");
+        }
+
+        let rawProofURL: string = existingSubmission.proofURLs[0] as string;
+        let rawProofURL2: string | undefined;
+
+        if (existingSubmission.proofURLs.length > 1) {
+            rawProofURL2 = existingSubmission.proofURLs[1];
+        }
+
+        let result: boolean;
+
+        if (rawProofURL2) {
+            result = await updateThreeValuesBasedOnOneValueInSheets(googleSheetId, 0, existingSubmission._id.toString(), "E", rawProofURL, "F", rawProofURL2, "G", existingSubmission.status);
+        } else {
+            result = await updateTwoValuesBasedOnOneValueInSheets(googleSheetId, 0, existingSubmission._id.toString(), "E", rawProofURL, "F", existingSubmission.status);
+        }
 
         if (!result) {
             throw new Error("Submission Failed, please try again");
