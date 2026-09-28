@@ -332,7 +332,7 @@ const reSubmitTask = async (req: AuthRequest, res: Response) => {
         if (rawProofURL2) {
             result = await updateThreeValuesBasedOnOneValueInSheets(googleSheetId, 0, existingSubmission._id.toString(), "E", rawProofURL, "F", rawProofURL2, "G", existingSubmission.status);
         } else {
-            result = await updateTwoValuesBasedOnOneValueInSheets(googleSheetId, 0, existingSubmission._id.toString(), "E", rawProofURL, "F", existingSubmission.status);
+            result = await updateThreeValuesBasedOnOneValueInSheets(googleSheetId, 0, existingSubmission._id.toString(), "E", rawProofURL, "F", existingSubmission.status, "G", "");
         }
 
         if (!result) {
