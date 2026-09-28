@@ -97,8 +97,24 @@ const submitTask = async (req: AuthRequest, res: Response) => {
             throw new Error("Submission Failed, please try again");
         }
 
-        let rawProofURLs: string = submission.proofURLs.join(", ");
-        const result: boolean = await logToGoogleSheets(googleSheetId,[submission._id.toString(), user.email, user.phoneNo, task.title, rawProofURLs, submission.status]);
+        if (submission.proofURLs.length < 1) {
+            throw new Error("No Submission links found");
+        }
+
+        let rawProofURL: string = submission.proofURLs[0] as string;
+        let rawProofURL2: string | undefined;
+
+        if (submission.proofURLs.length > 1) {
+            rawProofURL2 = submission.proofURLs[1];
+        }
+
+        let result: boolean;
+
+        if (rawProofURL2) {
+            result = await logToGoogleSheets(googleSheetId,[submission._id.toString(), user.email, user.phoneNo, task.title, rawProofURL, rawProofURL2, submission.status]);
+        } else {
+            result = await logToGoogleSheets(googleSheetId,[submission._id.toString(), user.email, user.phoneNo, task.title, rawProofURL, submission.status]);
+        }
 
         if (!result) {
             throw new Error("Submission Failed, please try again");
@@ -315,4 +331,111 @@ const reSubmitTask = async (req: AuthRequest, res: Response) => {
     }
 }
 
-export { submitTask, getTasks, getRewards, createAmbassadorAccount, getMySubmissions, reSubmitTask }
+const setProfilePicture = async (req: AuthRequest, res: Response) => {
+    try {
+        const userId = req.userId;
+        const file = req.file as Express.Multer.File;
+
+        if (!userId || !file) {
+            return res.status(400).json({ success: false, message: "Image not found" });
+        }
+
+        const user = await UserModel.findById(userId);
+
+        if (!user) {
+            return res.status(500).json({ success: false, message: "User not found" });
+        }
+
+        const DRIVE_FOLDER_ID: string | undefined = process.env.GOOGLE_DRIVE_FOLDER_ID_PROFILE_PICTURE;
+
+        if (!DRIVE_FOLDER_ID) {
+            throw new Error("Drive FOLDER NOT FOUND");
+        }
+
+        const bufferStream = Readable.from(file.buffer);
+
+        const driveResponse = await drive.files.create({
+            requestBody: {
+                name: `${user.name}_${user._id}`,
+                parents: [DRIVE_FOLDER_ID],
+            },
+            media: {
+                mimeType: file.mimetype,
+                body: bufferStream,
+            },
+            fields: 'id, webViewLink',
+        })
+
+        const { id: fileId, webViewLink } = driveResponse.data
+
+        if (fileId && webViewLink) {
+            await drive.permissions.create({
+                fileId,
+                requestBody: { role: 'reader', type: 'anyone' },
+            });
+
+            user.profilePictureLink = webViewLink;
+        }
+
+        user.isProfilePictureSet = true;
+        await user.save();
+
+        return res.status(200).json({ success: true, message: "Profile picture successfully set" });
+    } catch(error: unknown) {
+        console.log(error);
+
+        return res.status(500).json({ success: false, message: "Internal Server Error" });
+    }
+}
+
+
+const removeProfilePicture = async (req: AuthRequest, res: Response) => {
+    try {
+        const userId = req.userId;
+
+        if (!userId) {
+            return res.status(401).json({ success: false, message: "Unauthorized" });
+        }
+
+        const user = await UserModel.findById(userId);
+
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
+
+        if (!user.profilePictureLink) {
+            return res.status(400).json({ success: false, message: "Profile picture not found" });
+        }
+
+        const fileUrl = user.profilePictureLink;
+
+        const match = fileUrl.match(/\/d\/([^/]+)/);
+
+        if (!match) {
+            return res.status(400).json({ success: false, message: "Invalid Google Drive URL" });
+        }
+
+        const fileId = match[1];
+
+        if (!fileId) {
+            return res.status(400).json({ success: false, message: "Invalid Google Drive file ID" });
+        }
+
+        const response = await drive.files.delete({ fileId });
+
+        if (response.status !== 204) {
+            throw new Error("Error in deleting the profile picture");
+        }
+
+        await UserModel.findByIdAndUpdate(userId, { $unset: { profilePictureLink: 1 }, $set: { isProfilePictureSet: false } });
+
+        return res.status(200).json({ success: true, message: "Profile picture removed" });
+
+    } catch (error: unknown) {
+        console.log(error);
+
+        return res.status(500).json({ success: false, message: "Internal Server Error" });
+    }
+}
+
+export { submitTask, getTasks, getRewards, createAmbassadorAccount, getMySubmissions, reSubmitTask, setProfilePicture, removeProfilePicture }
