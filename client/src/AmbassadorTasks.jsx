@@ -1598,6 +1598,176 @@ function SubmitTaskModal({ task, submission, onClose, onSuccess }) {
 }
 
 // --- Task Details Modal ---
+// function TaskDetailsModal({ task, onClose, onSubmitClick, submissions = [] }) {
+//   useEffect(() => {
+//     if (task) {
+//       document.body.style.overflow = "hidden";
+//     }
+//     return () => {
+//       document.body.style.overflow = "unset";
+//     };
+//   }, [task]);
+
+//   if (!task) return null;
+
+//   let status = null;
+//   let isDisabled = false;
+//   const periodicity = task.periodicity?.toLowerCase();
+//   const isWeeklyTask = periodicity === "weekly";
+//   const isTwoTimeTask = periodicity === "two time" || periodicity === "twotime";
+
+//   if (isWeeklyTask) {
+//     const thisWeekSubmissions = submissions.filter((sub) => isSubmittedThisWeek(sub.createdAt));
+//     const validSubmissions = thisWeekSubmissions.filter((sub) => sub.status !== "Rejected");
+//     if (validSubmissions.length >= 2) {
+//       isDisabled = true;
+//       status = "Pending";
+//     } else {
+//       isDisabled = false;
+//       status = null;
+//     }
+//   } else if (isTwoTimeTask) {
+//     const totalProofURLs = submissions.reduce((acc, sub) => acc + (sub.proofURLs ? sub.proofURLs.length : 0), 0);
+//     if (totalProofURLs >= 2) {
+//       isDisabled = true;
+//       status = submissions[0]?.status || "Pending";
+//     } else {
+//       isDisabled = false;
+//       status = null;
+//     }
+//   } else {
+//     const submission = submissions[0];
+//     status = submission?.status;
+//     isDisabled = status === "Pending" || status === "Approved" || status === "ReSubmitted" || status === "Resubmitted";
+//   }
+//   const latestSubmission = submissions[0] || null;
+//   return (
+//     <div className="fixed inset-0 w-screen h-screen z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200 overflow-hidden">
+//       <div className="bg-white w-full max-w-lg rounded-2xl border border-[#dadce0] shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+        
+//         {/* Modal Header */}
+//         <div className="p-5 border-b border-[#dadce0] flex items-center justify-between bg-[#f8f9fa] shrink-0">
+//           <div className="flex items-center gap-2.5">
+//             <h2 className="text-xl font-bold text-[#202124]">Task Details</h2>
+//           </div>
+//           <button onClick={onClose} className="p-1.5 rounded-lg text-[#5f6368] hover:bg-gray-200 hover:text-[#202124] transition-colors cursor-pointer">
+//             <X className="w-5 h-5" />
+//           </button>
+//         </div>
+//         <div className="p-6 space-y-5 overflow-y-auto flex-1">
+//           <div>
+//             <div className="flex items-center gap-2 mb-1.5">
+//               <span className="text-[11px] uppercase tracking-wider font-bold bg-[#e8f0fe] text-[#1a73e8] px-2.5 py-0.5 rounded-md">
+//                 {task.periodicity || "Task"}
+//               </span>
+//             </div>
+//             <h3 className="text-xl font-bold text-[#202124]">{task.title}</h3>
+//           </div>
+//           {task.description && (
+//             <div className="space-y-1">
+//               <label className="text-xs font-bold text-[#5f6368] uppercase flex items-center gap-1">
+//                 <FileText className="w-3.5 h-3.5" /> Description
+//               </label>
+//               <p className="text-sm text-[#202124] leading-relaxed bg-[#f8f9fa] p-3.5 rounded-xl border border-[#dadce0] whitespace-pre-wrap">
+//                 {task.description}
+//               </p>
+//             </div>
+//           )}
+//           {task.referenceScript && (
+//             <div className="space-y-1">
+//               <label className="text-xs font-bold text-[#5f6368] uppercase flex items-center gap-1">
+//                 <FileText className="w-3.5 h-3.5" /> REFERENCE SCRIPT STRUCTURE FOR COMMUNICATION
+//               </label>
+//               <a href={task.referenceScript} target="_blank" className="text-sm text-[#202124] leading-relaxed bg-[#f8f9fa] p-3.5 rounded-xl border border-[#dadce0] whitespace-pre-wrap">
+//                 {task.referenceScript}
+//               </a>
+//             </div>
+//           )
+
+//           }
+//           <div className="space-y-1">
+//             <label className="text-xs font-bold text-[#5f6368] uppercase">HOW TO SUBMIT</label>
+//             <p className="text-sm text-[#3c4043] leading-relaxed whitespace-pre-wrap">
+//               {task.activity || "N/A"}
+//             </p>
+//           </div>
+//           <div className="space-y-1">
+//             <label className="text-xs font-bold text-[#5f6368] uppercase">THINGS TO AVOID</label>
+//             <p className="text-sm text-[#3c4043] leading-relaxed whitespace-pre-wrap">
+//               {task.thingsToAvoid || "N/A"}
+//             </p>
+//           </div>
+//           {task.target && (
+//             <div className="space-y-1">
+//               <label className="text-xs font-bold text-[#5f6368] uppercase flex items-center gap-1">
+//                 <Target className="w-3.5 h-3.5" /> Target
+//               </label>
+//               <p className="text-sm text-[#3c4043] bg-amber-50 text-amber-900 border border-amber-200 p-3 rounded-xl whitespace-pre-wrap">
+//                 {task.target}
+//               </p>
+//             </div>
+//           )}
+//           {(task.isImageAllowed || task.isVideoAllowed) && (
+//             <div className="pt-2 border-t border-[#dadce0]">
+//               <div className="p-3 bg-[#f8f9fa] rounded-xl border border-[#dadce0] flex flex-col items-center justify-center gap-1.5">
+//                 <p className="text-[11px] font-bold text-[#5f6368] uppercase">Allowed Formats</p>
+//                 <div className="flex items-center gap-6 text-xs font-medium text-[#202124]">
+//                   <span className="flex items-center gap-1.5">
+//                     {task.isImageAllowed ? <CheckCircle2 className="w-4 h-4 text-emerald-600" /> : <XCircle className="w-4 h-4 text-gray-400" />}
+//                     Image
+//                   </span>
+//                   <span className="flex items-center gap-1.5">
+//                     {task.isVideoAllowed ? <CheckCircle2 className="w-4 h-4 text-emerald-600" /> : <XCircle className="w-4 h-4 text-gray-400" />}
+//                     Video
+//                   </span>
+//                 </div>
+//               </div>
+//             </div>
+//           )}
+//         </div>
+
+//         {/* Modal Footer */}
+//         <div className="p-4 border-t border-[#dadce0] bg-[#f8f9fa] flex items-center justify-center shrink-0">
+//           <button onClick={() => !isDisabled && onSubmitClick(task, latestSubmission)} disabled={isDisabled} className={`flex items-center gap-2 px-6 py-2.5 rounded-xl font-bold text-sm shadow-md transition-all ${ isDisabled ? "bg-gray-300 text-gray-600 cursor-not-allowed border border-gray-400 shadow-none" : status === "Rejected" ? "bg-amber-600 text-white hover:bg-amber-700 cursor-pointer" : "bg-[#202124] text-white hover:bg-black cursor-pointer"}`}>
+//             {status === "Approved" && (
+//               <>
+//                 <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+//                 <span>APPROVED</span>
+//               </>
+//             )}
+//             {(status === "ReSubmitted" || status === "Resubmitted") && (
+//               <>
+//                 <CheckCircle2 className="w-4 h-4 text-amber-600" />
+//                 <span>RE SUBMITTED</span>
+//               </>
+//             )}
+//             {status === "Pending" && (
+//               <>
+//                 <CheckCircle2 className="w-4 h-4 text-amber-600" />
+//                 <span>SUBMITTED</span>
+//               </>
+//             )}
+//             {status === "Rejected" && (
+//               <>
+//                 <RotateCcw className="w-4 h-4" />
+//                 <span>RE SUBMIT</span>
+//               </>
+//             )}
+//             {!status && (
+//               <>
+//                 <Send className="w-4 h-4" />
+//                 <span>SUBMIT TASK</span>
+//               </>
+//             )}
+//           </button>
+//         </div>
+
+//       </div>
+//     </div>
+//   );
+// }
+
+
 function TaskDetailsModal({ task, onClose, onSubmitClick, submissions = [] }) {
   useEffect(() => {
     if (task) {
@@ -1641,6 +1811,7 @@ function TaskDetailsModal({ task, onClose, onSubmitClick, submissions = [] }) {
     isDisabled = status === "Pending" || status === "Approved" || status === "ReSubmitted" || status === "Resubmitted";
   }
   const latestSubmission = submissions[0] || null;
+
   return (
     <div className="fixed inset-0 w-screen h-screen z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200 overflow-hidden">
       <div className="bg-white w-full max-w-lg rounded-2xl border border-[#dadce0] shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
@@ -1654,6 +1825,7 @@ function TaskDetailsModal({ task, onClose, onSubmitClick, submissions = [] }) {
             <X className="w-5 h-5" />
           </button>
         </div>
+        
         <div className="p-6 space-y-5 overflow-y-auto flex-1">
           <div>
             <div className="flex items-center gap-2 mb-1.5">
@@ -1663,6 +1835,7 @@ function TaskDetailsModal({ task, onClose, onSubmitClick, submissions = [] }) {
             </div>
             <h3 className="text-xl font-bold text-[#202124]">{task.title}</h3>
           </div>
+          
           {task.description && (
             <div className="space-y-1">
               <label className="text-xs font-bold text-[#5f6368] uppercase flex items-center gap-1">
@@ -1673,18 +1846,24 @@ function TaskDetailsModal({ task, onClose, onSubmitClick, submissions = [] }) {
               </p>
             </div>
           )}
+
           {task.referenceScript && (
             <div className="space-y-1">
               <label className="text-xs font-bold text-[#5f6368] uppercase flex items-center gap-1">
                 <FileText className="w-3.5 h-3.5" /> REFERENCE SCRIPT STRUCTURE FOR COMMUNICATION
               </label>
-              <a href={task.referenceScript} target="_blank" className="text-sm text-[#202124] leading-relaxed bg-[#f8f9fa] p-3.5 rounded-xl border border-[#dadce0] whitespace-pre-wrap">
-                {task.referenceScript}
+              <a
+                href={task.referenceScript}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 text-sm text-[#1a73e8] font-medium leading-relaxed bg-[#f8f9fa] hover:bg-[#e8f0fe] p-3.5 rounded-xl border border-[#dadce0] hover:border-[#1a73e8] transition-all break-all group cursor-pointer"
+              >
+                <ExternalLink className="w-4 h-4 shrink-0 text-[#1a73e8] group-hover:scale-110 transition-transform" />
+                <span className="underline underline-offset-2">{task.referenceScript}</span>
               </a>
             </div>
-          )
+          )}
 
-          }
           <div className="space-y-1">
             <label className="text-xs font-bold text-[#5f6368] uppercase">HOW TO SUBMIT</label>
             <p className="text-sm text-[#3c4043] leading-relaxed whitespace-pre-wrap">
