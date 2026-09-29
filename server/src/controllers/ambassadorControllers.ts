@@ -51,6 +51,10 @@ const submitTask = async (req: AuthRequest, res: Response) => {
             return res.status(400).json({ success: false, message: "Task has been already submitted" });
         }
 
+        if (isSubmissionExists && isSubmissionExists.proofURLs.length > 1 && task.periodicity === "Two Time") {
+            return res.status(400).json({ success: false, message: "Both the links have already been for this task" });
+        }
+
         const DRIVE_FOLDER_ID = process.env.GOOGLE_DRIVE_FOLDER_ID_SUBMISSIONS as string;
 
         if (files) {
@@ -85,7 +89,20 @@ const submitTask = async (req: AuthRequest, res: Response) => {
             }
         }
 
-        submission = await SubmissionModel.create({ ambassadorId: ambassador._id, taskId: task._id, proofURLs, status: "Pending" });
+        let isSubmittingTwice: boolean = false;
+
+        if (task.periodicity === "Two Time" && isSubmissionExists) {
+            proofURLs.push(isSubmissionExists.proofURLs[0]);
+            submission = await SubmissionModel.findById(isSubmissionExists._id);
+            if (!submission || !submission.proofURLs) {
+                throw new Error("Submission failed, please try again")
+            }
+            submission.proofURLs = proofURLs;
+            await submission.save();
+            isSubmittingTwice = true;
+        } else {
+            submission = await SubmissionModel.create({ ambassadorId: ambassador._id, taskId: task._id, proofURLs, status: "Pending" });
+        }
 
         if (!submission) {
             return res.status(500).json({ success: false, message: "Submission Failed, please try agin" });
@@ -110,7 +127,12 @@ const submitTask = async (req: AuthRequest, res: Response) => {
 
         let result: boolean;
 
-        if (rawProofURL2) {
+        if (isSubmittingTwice) {
+            if (!rawProofURL2) {
+                throw new Error("Submission failed, please try again.");
+            }
+            result = await updateThreeValuesBasedOnOneValueInSheets(googleSheetId, 0, submission._id.toString(), "E", rawProofURL, "F", rawProofURL2, "G", submission.status);
+        } else if (rawProofURL2) {
             result = await logToGoogleSheets(googleSheetId,[submission._id.toString(), user.email, user.phoneNo, task.title, rawProofURL, rawProofURL2, submission.status]);
         } else {
             result = await logToGoogleSheets(googleSheetId,[submission._id.toString(), user.email, user.phoneNo, task.title, rawProofURL, submission.status]);

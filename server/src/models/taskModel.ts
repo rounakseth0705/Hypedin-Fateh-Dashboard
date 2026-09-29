@@ -4,7 +4,7 @@ interface ITask extends mongoose.Document {
     title: string,
     description: string,
     belongsTo?: "Ambassador" | "POC",
-    periodicity: "Weekly" | "Monthly" | "Both" | "One Time",
+    periodicity: "Weekly" | "Monthly" | "Both" | "One Time" | "Two Time",
     activity: string,
     target?: string,
     taskMonth?: number,
