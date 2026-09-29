@@ -11,6 +11,7 @@ interface ITask extends mongoose.Document {
     taskWeek?: number,
     isImageAllowed: boolean,
     isVideoAllowed: boolean,
+    referenceScript?: string,
     createdBy: mongoose.Types.ObjectId
 }
 
@@ -25,6 +26,7 @@ const taskSchema = new mongoose.Schema({
     taskWeek: { type: Number },
     isImageAllowed: { type: Boolean, required: true, default: false },
     isVideoAllowed: { type: Boolean, required: true, default: false },
+    referenceScript: { type: String },
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "admin", required: true, select: false }
 },{ timestamps: true });
 

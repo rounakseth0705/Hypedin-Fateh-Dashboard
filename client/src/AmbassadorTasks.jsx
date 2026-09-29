@@ -1673,6 +1673,18 @@ function TaskDetailsModal({ task, onClose, onSubmitClick, submissions = [] }) {
               </p>
             </div>
           )}
+          {task.referenceScript && (
+            <div className="space-y-1">
+              <label className="text-xs font-bold text-[#5f6368] uppercase flex items-center gap-1">
+                <FileText className="w-3.5 h-3.5" /> REFERENCE SCRIPT STRUCTURE FOR COMMUNICATION
+              </label>
+              <a href={task.referenceScript} target="_blank" className="text-sm text-[#202124] leading-relaxed bg-[#f8f9fa] p-3.5 rounded-xl border border-[#dadce0] whitespace-pre-wrap">
+                {task.referenceScript}
+              </a>
+            </div>
+          )
+
+          }
           <div className="space-y-1">
             <label className="text-xs font-bold text-[#5f6368] uppercase">HOW TO SUBMIT</label>
             <p className="text-sm text-[#3c4043] leading-relaxed whitespace-pre-wrap">
