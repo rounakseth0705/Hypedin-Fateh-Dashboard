@@ -97,16 +97,10 @@ const submitTask = async (req: AuthRequest, res: Response) => {
             if (!submission || !submission.proofURLs) {
                 throw new Error("Submission failed, please try again")
             }
-            if (proofURLs.length > 1 && proofURLs[0] === proofURLs[1]) {
-                throw new Error("Both the links can't be same");
-            }
             submission.proofURLs = proofURLs;
             await submission.save();
             isSubmittingTwice = true;
         } else {
-            if (proofURLs.length > 1 && proofURLs[0] === proofURLs[1]) {
-                throw new Error("Both the links can't be same")
-            }
             submission = await SubmissionModel.create({ ambassadorId: ambassador._id, taskId: task._id, proofURLs, status: "Pending" });
         }
 
