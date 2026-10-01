@@ -26,7 +26,7 @@ const submitTask = async (req: AuthRequest, res: Response) => {
         }
 
         if ((taskId === "6ab7a62bf25810bb45cab354" || taskId === "6ab7a8725b7e2f770036f7d6") && proofURLs.length > 1 && (!proofURLs[0].includes("instagram") || !proofURLs[1].includes("drive"))) {
-            return res.status(400).json({ success: false, message: "Please upload appropriate links" });
+            return res.status(400).json({ success: false, message: "First one should be an instagram link whereas second should a google drive link" });
         }
 
         const user = await UserModel.findById(userId);
