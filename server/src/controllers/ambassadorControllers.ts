@@ -105,6 +105,9 @@ const submitTask = async (req: AuthRequest, res: Response) => {
             if (!submission || !submission.proofURLs) {
                 throw new Error("Submission failed, please try again")
             }
+            if (proofURLs[0] === proofURLs[1]) {
+                return res.status(400).json({ success: false, message: "Both the links can't be same" });
+            }
             submission.proofURLs = proofURLs;
             await submission.save();
             isSubmittingTwice = true;
@@ -270,6 +273,14 @@ const reSubmitTask = async (req: AuthRequest, res: Response) => {
 
         if (!proofURLs || !taskId || !userId) {
             return res.status(400).json({ success: false, message: "Details missing" });
+        }
+
+        if (proofURLs.length > 1 && proofURLs[0] === proofURLs[1]) {
+            return res.status(400).json({ success: false, message: "Both the links can't be same" });
+        }
+
+        if ((taskId === "6ab7a62bf25810bb45cab354" || taskId === "6ab7a8725b7e2f770036f7d6") && proofURLs.length > 1 && (!proofURLs[0].includes("instagram") || !proofURLs[1].includes("drive"))) {
+            return res.status(400).json({ success: false, message: "First one should be an instagram link whereas second should a google drive link" });
         }
 
         const user = await UserModel.findById(userId);
