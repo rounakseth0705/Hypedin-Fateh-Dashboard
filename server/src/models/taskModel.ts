@@ -13,6 +13,7 @@ interface ITask extends mongoose.Document {
     isVideoAllowed: boolean,
     referenceScript?: string,
     captionForTheReel?: string,
+    preBuzzCreative?: string,
     createdBy: mongoose.Types.ObjectId
 }
 
@@ -29,6 +30,7 @@ const taskSchema = new mongoose.Schema({
     isVideoAllowed: { type: Boolean, required: true, default: false },
     referenceScript: { type: String },
     captionForTheReel: { type: String },
+    preBuzzCreative: { type: String },
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "admin", required: true, select: false }
 },{ timestamps: true });
 
