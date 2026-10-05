@@ -3,14 +3,14 @@
 // import toast from "react-hot-toast";
 
 // const AdminTasks = () => {
-//   const [activeTab, setActiveTab] = useState("active"); // 'active' | 'review' | 'completed'
+//   const [activeTab, setActiveTab] = useState("active"); // 'active' | 'review' | 'resubmitted' | 'rejected' | 'completed'
 
 //   // States for Active Tasks
 //   const [tasks, setTasks] = useState([]);
 //   const [loadingTasks, setLoadingTasks] = useState(true);
 //   const [tasksError, setTasksError] = useState("");
 
-//   // States for Submissions (Review & Completed)
+//   // States for Submissions (Review, Resubmitted, Rejected & Completed)
 //   const [submissions, setSubmissions] = useState([]);
 //   const [loadingSubmissions, setLoadingSubmissions] = useState(true);
 //   const [submissionsError, setSubmissionsError] = useState("");
@@ -74,7 +74,15 @@
 
 //   // Filter Submissions based on status
 //   const reviewSubmissions = submissions.filter(
-//     (sub) => sub.status === "Pending" || sub.status === "Rejected"
+//     (sub) => sub.status === "Pending"
+//   );
+
+//   const reSubmittedSubmissions = submissions.filter(
+//     (sub) => sub.status === "ReSubmitted"
+//   );
+
+//   const rejectedSubmissions = submissions.filter(
+//     (sub) => sub.status === "Rejected"
 //   );
 
 //   const completedSubmissions = submissions.filter(
@@ -144,10 +152,10 @@
 //         </div>
 
 //         {/* Navigation Tabs */}
-//         <div className="flex border-b border-slate-200 mb-6 bg-white rounded-t-xl px-4 pt-2 shadow-sm">
+//         <div className="flex border-b border-slate-200 mb-6 bg-white rounded-t-xl px-4 pt-2 shadow-sm overflow-x-auto">
 //           <button
 //             onClick={() => setActiveTab("active")}
-//             className={`py-3 px-4 font-semibold text-sm border-b-2 transition-colors duration-200 ${
+//             className={`py-3 px-4 font-semibold text-sm border-b-2 transition-colors duration-200 whitespace-nowrap ${
 //               activeTab === "active"
 //                 ? "border-blue-600 text-blue-600"
 //                 : "border-transparent text-slate-500 hover:text-slate-800"
@@ -158,7 +166,7 @@
 
 //           <button
 //             onClick={() => setActiveTab("review")}
-//             className={`py-3 px-4 font-semibold text-sm border-b-2 transition-colors duration-200 ${
+//             className={`py-3 px-4 font-semibold text-sm border-b-2 transition-colors duration-200 whitespace-nowrap ${
 //               activeTab === "review"
 //                 ? "border-blue-600 text-blue-600"
 //                 : "border-transparent text-slate-500 hover:text-slate-800"
@@ -168,8 +176,30 @@
 //           </button>
 
 //           <button
+//             onClick={() => setActiveTab("resubmitted")}
+//             className={`py-3 px-4 font-semibold text-sm border-b-2 transition-colors duration-200 whitespace-nowrap ${
+//               activeTab === "resubmitted"
+//                 ? "border-blue-600 text-blue-600"
+//                 : "border-transparent text-slate-500 hover:text-slate-800"
+//             }`}
+//           >
+//             Re Submitted Tasks ({reSubmittedSubmissions.length})
+//           </button>
+
+//           <button
+//             onClick={() => setActiveTab("rejected")}
+//             className={`py-3 px-4 font-semibold text-sm border-b-2 transition-colors duration-200 whitespace-nowrap ${
+//               activeTab === "rejected"
+//                 ? "border-blue-600 text-blue-600"
+//                 : "border-transparent text-slate-500 hover:text-slate-800"
+//             }`}
+//           >
+//             Rejected Tasks ({rejectedSubmissions.length})
+//           </button>
+
+//           <button
 //             onClick={() => setActiveTab("completed")}
-//             className={`py-3 px-4 font-semibold text-sm border-b-2 transition-colors duration-200 ${
+//             className={`py-3 px-4 font-semibold text-sm border-b-2 transition-colors duration-200 whitespace-nowrap ${
 //               activeTab === "completed"
 //                 ? "border-blue-600 text-blue-600"
 //                 : "border-transparent text-slate-500 hover:text-slate-800"
@@ -242,13 +272,39 @@
 //             loading={loadingSubmissions}
 //             error={submissionsError}
 //             emptyTitle="No Submissions to Review"
-//             emptyDesc="All submissions have been reviewed or none are pending/rejected."
+//             emptyDesc="There are currently no pending submissions awaiting review."
 //             onReview={handleReviewSubmission}
 //             actionLoadingId={actionLoadingId}
 //           />
 //         )}
 
-//         {/* TAB 3: COMPLETED TASKS */}
+//         {/* TAB 3: RE SUBMITTED TASKS */}
+//         {activeTab === "resubmitted" && (
+//           <SubmissionsList
+//             submissions={reSubmittedSubmissions}
+//             loading={loadingSubmissions}
+//             error={submissionsError}
+//             emptyTitle="No Re-Submitted Submissions"
+//             emptyDesc="There are currently no re-submitted tasks."
+//             onReview={handleReviewSubmission}
+//             actionLoadingId={actionLoadingId}
+//           />
+//         )}
+
+//         {/* TAB 4: REJECTED TASKS */}
+//         {activeTab === "rejected" && (
+//           <SubmissionsList
+//             submissions={rejectedSubmissions}
+//             loading={loadingSubmissions}
+//             error={submissionsError}
+//             emptyTitle="No Rejected Submissions"
+//             emptyDesc="There are currently no rejected submissions."
+//             onReview={handleReviewSubmission}
+//             actionLoadingId={actionLoadingId}
+//           />
+//         )}
+
+//         {/* TAB 5: COMPLETED TASKS */}
 //         {activeTab === "completed" && (
 //           <SubmissionsList
 //             submissions={completedSubmissions}
@@ -354,6 +410,8 @@
 //               ? "bg-emerald-50 text-emerald-700 border-emerald-200"
 //               : item.status === "Rejected"
 //               ? "bg-red-50 text-red-700 border-red-200"
+//               : item.status === "ReSubmitted"
+//               ? "bg-purple-50 text-purple-700 border-purple-200"
 //               : "bg-amber-50 text-amber-700 border-amber-200"
 //           }`}
 //         >
@@ -440,7 +498,6 @@
 
 
 
-
 import React, { useState, useEffect } from "react";
 import API from "./config/api.js";
 import toast from "react-hot-toast";
@@ -457,7 +514,10 @@ const AdminTasks = () => {
   const [submissions, setSubmissions] = useState([]);
   const [loadingSubmissions, setLoadingSubmissions] = useState(true);
   const [submissionsError, setSubmissionsError] = useState("");
-  
+
+  // Selected task filter state for submission tabs
+  const [selectedTaskId, setSelectedTaskId] = useState("");
+
   // Track action processing state per submission ID
   const [actionLoadingId, setActionLoadingId] = useState(null);
 
@@ -515,20 +575,28 @@ const AdminTasks = () => {
     fetchSubmissions();
   }, []);
 
+  // Filter Submissions based on selected task
+  const filteredSubmissions = selectedTaskId
+    ? submissions.filter((sub) => {
+        const tId = sub.taskId?._id || sub.taskId?.id || sub.taskId;
+        return tId === selectedTaskId;
+      })
+    : submissions;
+
   // Filter Submissions based on status
-  const reviewSubmissions = submissions.filter(
+  const reviewSubmissions = filteredSubmissions.filter(
     (sub) => sub.status === "Pending"
   );
 
-  const reSubmittedSubmissions = submissions.filter(
+  const reSubmittedSubmissions = filteredSubmissions.filter(
     (sub) => sub.status === "ReSubmitted"
   );
 
-  const rejectedSubmissions = submissions.filter(
+  const rejectedSubmissions = filteredSubmissions.filter(
     (sub) => sub.status === "Rejected"
   );
 
-  const completedSubmissions = submissions.filter(
+  const completedSubmissions = filteredSubmissions.filter(
     (sub) => sub.status === "Approved"
   );
 
@@ -651,6 +719,31 @@ const AdminTasks = () => {
             Completed Tasks ({completedSubmissions.length})
           </button>
         </div>
+
+        {/* Task Filter Dropdown for Submissions */}
+        {activeTab !== "active" && (
+          <div className="mb-6 bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col sm:flex-row sm:items-center gap-3">
+            <label htmlFor="taskFilter" className="text-xs font-semibold text-slate-700 whitespace-nowrap">
+              Filter by Task:
+            </label>
+            <select
+              id="taskFilter"
+              value={selectedTaskId}
+              onChange={(e) => setSelectedTaskId(e.target.value)}
+              className="w-full text-xs p-2 bg-slate-50 border border-slate-200 rounded-lg focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 transition-all"
+            >
+              <option value="">All Tasks</option>
+              {tasks.map((t, idx) => {
+                const id = t._id || t.id;
+                return (
+                  <option key={id || idx} value={id}>
+                    {t.title || `Task #${idx + 1}`}
+                  </option>
+                );
+              })}
+            </select>
+          </div>
+        )}
 
         {/* TAB 1: ACTIVE TASKS */}
         {activeTab === "active" && (
