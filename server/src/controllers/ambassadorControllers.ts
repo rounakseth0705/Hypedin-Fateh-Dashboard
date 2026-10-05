@@ -210,7 +210,7 @@ const getTasks = async (req: Request, res: Response) => {
     try {
         const taskDocs = await TaskModel.find({  });
 
-        let tasks = [];
+        let tasks;
 
         if (taskDocs.length > 0) {
             tasks = [...taskDocs].sort((a, b) => {
