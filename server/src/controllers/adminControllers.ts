@@ -77,7 +77,18 @@ const deleteTask = async (req: Request, res: Response) => {
 
 const getTasks = async (req: Request, res: Response) => {
     try {
-        const tasks = await TaskModel.find({ });
+        const taskDocs = await TaskModel.find({  });
+        
+        let tasks;
+
+        if (taskDocs.length > 0) {
+            tasks = [...taskDocs].sort((a, b) => {
+                const aTime = new Date((a as any).createdAt ?? 0).getTime();
+                const bTime = new Date((b as any).createdAt ?? 0).getTime();
+                return aTime - bTime;
+            });
+        }
+        
 
         return res.status(200).json({ success: true, tasks, message: "Tasks Fetched" });
     } catch(error: unknown) {
