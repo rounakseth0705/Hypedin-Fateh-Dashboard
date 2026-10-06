@@ -100,7 +100,7 @@ const getTasks = async (req: Request, res: Response) => {
 
 const getSubmissions = async (req: Request, res: Response) => {
     try {
-        const submissions = await SubmissionModel.find({}).populate("taskId","title periodicity").populate({ path: "ambassadorId", populate: { path: "userId", select: "name email phoneNo" } });
+        const submissions = await SubmissionModel.find({}).populate("taskId","title periodicity taskMonth").populate({ path: "ambassadorId", populate: { path: "userId", select: "name email phoneNo" } });
 
         return res.status(200).json({ success: true, submissions, message: "Submissions Fetched" });
     } catch(error: unknown) {
