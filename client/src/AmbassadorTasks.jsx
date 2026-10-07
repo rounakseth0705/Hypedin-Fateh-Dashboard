@@ -457,6 +457,17 @@ function TaskDetailsModal({ task, onClose, onSubmitClick, submissions = [] }) {
               <p className="text-sm text-[#202124] leading-relaxed bg-[#f8f9fa] p-3.5 rounded-xl border border-[#dadce0] whitespace-pre-wrap">{task.description}</p>
             </div>
           )}
+          {task.carouselCreative && (
+            <div className="space-y-1">
+              <label className="text-xs font-bold text-[#5f6368] uppercase flex items-center gap-1">
+                <FileText className="w-3.5 h-3.5" /> CAROUSEL CREATIVE
+              </label>
+              <a href={task.carouselCreative} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-[#1a73e8] hover:underline bg-[#f8f9fa] p-3.5 rounded-xl border border-[#dadce0] whitespace-nowrap overflow-x-auto">
+                <ExternalLink className="w-4 h-4 shrink-0 text-[#1a73e8]" />
+                <span>{task.carouselCreative}</span>
+              </a>
+            </div>
+          )}
           {task.referenceScript && (
             <div className="space-y-1">
               <label className="text-xs font-bold text-[#5f6368] uppercase flex items-center gap-1">

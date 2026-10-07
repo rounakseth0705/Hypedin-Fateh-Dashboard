@@ -14,6 +14,7 @@ interface ITask extends mongoose.Document {
     referenceScript?: string,
     captionForTheReel?: string,
     preBuzzCreative?: string,
+    carouselCreative?: string,
     createdBy: mongoose.Types.ObjectId
 }
 
@@ -31,6 +32,7 @@ const taskSchema = new mongoose.Schema({
     referenceScript: { type: String },
     captionForTheReel: { type: String },
     preBuzzCreative: { type: String },
+    carouselCreative: { type: String },
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "admin", required: true, select: false }
 },{ timestamps: true });
 
