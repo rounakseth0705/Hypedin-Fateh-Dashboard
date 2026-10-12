@@ -120,7 +120,7 @@ const submitTask = async (req: AuthRequest, res: Response) => {
         }
 
         if (!submission) {
-            return res.status(500).json({ success: false, message: "Submission Failed, please try agin" });
+            return res.status(500).json({ success: false, message: "Submission Failed, please try again" });
         }
 
         const googleSheetId: string | undefined = process.env.GOOGLE_SHEETS_ID_SUBMISSION;
@@ -157,12 +157,14 @@ const submitTask = async (req: AuthRequest, res: Response) => {
             throw new Error("Submission Failed, please try again");
         }
 
-        ambassador.taskSubmitted = (ambassador.taskSubmitted || 0) + 1;
-        if (!Array.isArray(ambassador.submittedTasks)) {
-            ambassador.submittedTasks = [];
+        if (!isSubmissionExists) {
+            ambassador.taskSubmitted = (ambassador.taskSubmitted || 0) + 1;
+            if (!Array.isArray(ambassador.submittedTasks)) {
+                ambassador.submittedTasks = [];
+            }
+            ambassador.submittedTasks.push(task._id);
+            await ambassador.save();
         }
-        ambassador.submittedTasks.push(task._id);
-        await ambassador.save();
 
         return res.status(200).json({ success: true, message: "Task Submitted" });
     } catch(error: unknown) {

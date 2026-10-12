@@ -337,13 +337,17 @@ const reviewSubmission = async (req: AuthRequest, res: Response) => {
                 return res.status(500).json({ success: false, message: "Ambassador not found" });
             }
 
-            ambassador.taskCompleted = (ambassador.taskCompleted || 0) + 1;
-            if (!Array.isArray(ambassador.completedTasks)) {
-                ambassador.completedTasks = [];
-            }
+            const hasAlreadyCompletedTheTask = await SubmissionModel.findOne({ $or: [{ taskId: submission.taskId, ambassadorId: ambassador._id, status: "Approved" },{ taskId: submission.taskId, ambassadorId: ambassador._id, status: "Rejected" },{ taskId: submission.taskId, ambassadorId: ambassador._id, status: "ReSubmitted" }]});
 
-            ambassador.completedTasks.push(submission.taskId);
-            await ambassador.save();
+            if (!hasAlreadyCompletedTheTask) {
+                ambassador.taskCompleted = (ambassador.taskCompleted || 0) + 1;
+                if (!Array.isArray(ambassador.completedTasks)) {
+                    ambassador.completedTasks = [];
+                }
+    
+                ambassador.completedTasks.push(submission.taskId);
+                await ambassador.save();
+            }
         }
 
         if (adminReview === "Rejected" && submission.status === "Approved") {
