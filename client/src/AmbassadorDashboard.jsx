@@ -179,11 +179,12 @@ export default function AmbassadorDashboard() {
 
   // Calculate weighted percentage based on submitted task IDs
   const taskWeights = {
-    "6aad38059613bc1f9ce71098": 30,
-    "6ab0fdd3d6e984c1148e6624": 10,
-    "6ab10101d6e984c1148e6625": 10,
-    "6ab102bda59894c5ba436a58": 10,
-    "6ab10349a59894c5ba436a59": 40
+    "6ab7a62bf25810bb45cab354": 20,
+    "6ab7a8725b7e2f770036f7d6": 10,
+    "6ab7a9065b7e2f770036f7d7": 10,
+    "6ab7a9c95b7e2f770036f7d8": 15,
+    "6ab7aa5e5b7e2f770036f7d9": 30,
+    "6abbd20a2269badadac93213": 15
   };
 
   const submissionPercentage = submittedTasksList.reduce((acc, id) => {
