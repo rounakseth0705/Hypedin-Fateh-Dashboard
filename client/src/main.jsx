@@ -18,6 +18,7 @@ import ProtectedRoute from './ProtectedRoute.jsx'
 import AdminTasks from './AdminTasks.jsx'
 import AdminInbox from './AdminInbox.jsx'
 import CreateAmbassador from './CreateAmbassador.jsx'
+import AdminLeaderboard from './AdminLeaderboard.jsx'
 
 const router = createBrowserRouter([
   {
@@ -92,6 +93,12 @@ const router = createBrowserRouter([
             path: "createAmbassador",
             element: <ProtectedRoute>
               <CreateAmbassador/>
+            </ProtectedRoute>
+          },
+          {
+            path: "leaderboard",
+            element: <ProtectedRoute>
+              <AdminLeaderboard/>
             </ProtectedRoute>
           }
         ]

@@ -462,4 +462,32 @@ const deleteAmbassador = async (req: AuthRequest, res: Response) => {
     }
 }
 
-export { createTask, deleteTask, getTasks, getAmbassadors, createReward, allotUTMAndQR, seedAmbassador, seedPOC, getSubmissions, getPOCs, reviewSubmission, deleteAmbassador }
+const getAmbassadorsLeaderboardBasedOnTaskCompleted = async (req: Request, res: Response) => {
+    try {
+        const ambassadors = await AmbassadorModel.find({}).populate("userId", "name email phoneNo").populate("submittedTasks", "title").populate("completedTasks", "title");
+
+        const sortedAmbassadors = ambassadors.sort((a,b) => a.taskCompleted - b.taskCompleted);
+
+        return res.status(200).json({ success: true, sortedAmbassadors, message: "Sorted Ambassadors based on task completed" });
+    } catch(error: unknown) {
+        console.log(error);
+
+        res.status(500).json({ success: false, message: "Internal Server Error" });
+    }
+}
+
+const getAmbassadorsLeaderboardBasedOnTaskSubmitted = async (req: Request, res: Response) => {
+    try {
+        const ambassadors = await AmbassadorModel.find({}).populate("userId", "name email phoneNo").populate("submittedTasks", "title").populate("completedTasks", "title");
+
+        const sortedAmbassadors = ambassadors.sort((a,b) => a.taskSubmitted - b.taskSubmitted);
+
+        return res.status(200).json({ success: true, sortedAmbassadors, message: "Sorted Ambassadors based on task submitted" });
+    } catch(error: unknown) {
+        console.log(error);
+
+        res.status(500).json({ success: false, message: "Internal Server Error" });
+    }
+}
+
+export { createTask, deleteTask, getTasks, getAmbassadors, createReward, allotUTMAndQR, seedAmbassador, seedPOC, getSubmissions, getPOCs, reviewSubmission, deleteAmbassador, getAmbassadorsLeaderboardBasedOnTaskCompleted, getAmbassadorsLeaderboardBasedOnTaskSubmitted }

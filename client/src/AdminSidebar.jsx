@@ -117,6 +117,7 @@ export default function AdminSidebar({ isOpen, onClose }) {
     { name: "Tasks", path: "/adminDashboard/tasks", icon: ListTodo },
     { name: "Create Task", path: "/adminDashboard/createTask", icon: PlusCircle },
     { name: "Inbox", path: "/adminDashboard/inbox", icon: Inbox },
+    { name: "Leaderboard", path: "/adminDashboard/leaderboard", icon: Users },
     { name: "Create Ambassador", path: "/adminDashboard/createAmbassador", icon: User }
   ];
 
