@@ -466,7 +466,7 @@ const getAmbassadorsLeaderboardBasedOnTaskCompleted = async (req: Request, res: 
     try {
         const ambassadors = await AmbassadorModel.find({}).populate("userId", "name email phoneNo").populate("submittedTasks", "title").populate("completedTasks", "title");
 
-        const sortedAmbassadors = ambassadors.sort((a,b) => a.taskCompleted - b.taskCompleted);
+        const sortedAmbassadors = ambassadors.sort((a,b) => b.taskCompleted - a.taskCompleted);
 
         return res.status(200).json({ success: true, sortedAmbassadors, message: "Sorted Ambassadors based on task completed" });
     } catch(error: unknown) {
@@ -480,7 +480,7 @@ const getAmbassadorsLeaderboardBasedOnTaskSubmitted = async (req: Request, res: 
     try {
         const ambassadors = await AmbassadorModel.find({}).populate("userId", "name email phoneNo").populate("submittedTasks", "title").populate("completedTasks", "title");
 
-        const sortedAmbassadors = ambassadors.sort((a,b) => a.taskSubmitted - b.taskSubmitted);
+        const sortedAmbassadors = ambassadors.sort((a,b) => b.taskSubmitted - a.taskSubmitted);
 
         return res.status(200).json({ success: true, sortedAmbassadors, message: "Sorted Ambassadors based on task submitted" });
     } catch(error: unknown) {
