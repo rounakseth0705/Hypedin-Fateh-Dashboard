@@ -614,7 +614,7 @@ export default function AmbassadorTasks() {
                         {expanded ? <><ChevronUp className="w-5 h-5"/> COLLAPSE</> : <><ChevronDown className="w-5 h-5"/> EXPAND</>}</button>
                     )} */}
                   </div>
-                  {expanded && !locked && (
+                  {expanded && !locked && !isCompleted(phase) && (
                     <div className="border-t border-[#dadce0] divide-y divide-[#dadce0]">
                       {phaseTasks.length > 0 ? (
                         phaseTasks.map((task) => {
