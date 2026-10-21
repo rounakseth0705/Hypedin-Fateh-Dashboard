@@ -455,7 +455,12 @@ export default function AmbassadorTasks() {
   const [submissionsMap, setSubmissionsMap] = useState(new Map());
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [expandedPhases, setExpandedPhases] = useState({ 1: true });
+  // const [expandedPhases, setExpandedPhases] = useState({ 1: true });
+  const [expandedPhases, setExpandedPhases] = useState(() => {
+    const now = new Date();
+    const currentPhase = phases.find((p) => now >= p.startDate && now <= p.endDate);
+    return currentPhase ? { [currentPhase.id]: true } : {};
+  });
   const [showReports, setShowReports] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
   const [submittingTask, setSubmittingTask] = useState(null);
