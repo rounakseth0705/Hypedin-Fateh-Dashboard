@@ -450,6 +450,11 @@ function TaskStatusButton({ task, submissions = [], onClick }) {
 }
 
 export default function AmbassadorTasks() {
+  const phases = [
+    { id: 1, title: "Month 1", dateRange: "16 Sep 2026 - 16 Oct 2026", startDate: new Date("2026-09-16"), endDate: new Date("2026-10-16T23:59:59") },
+    { id: 2, title: "Month 2", dateRange: "To Be Declared", startDate: new Date("2026-10-20"), endDate: new Date("2026-11-19T23:59:59") },
+    { id: 3, title: "Month 3", dateRange: "To Be Declared", startDate: new Date("2026-11-20"), endDate: new Date("2026-12-19T23:59:59") },
+  ];
   const [tasks, setTasks] = useState([]);
   const [submissions, setSubmissions] = useState([]);
   const [submissionsMap, setSubmissionsMap] = useState(new Map());
@@ -470,11 +475,6 @@ export default function AmbassadorTasks() {
   //   { id: 2, title: "Month 2", dateRange: "To Be Declared", startDate: new Date("2026-10-20") },
   //   { id: 3, title: "Month 3", dateRange: "To Be Declared", startDate: new Date("2026-11-20") },
   // ];
-  const phases = [
-    { id: 1, title: "Month 1", dateRange: "16 Sep 2026 - 16 Oct 2026", startDate: new Date("2026-09-16"), endDate: new Date("2026-10-16T23:59:59") },
-    { id: 2, title: "Month 2", dateRange: "To Be Declared", startDate: new Date("2026-10-20"), endDate: new Date("2026-11-19T23:59:59") },
-    { id: 3, title: "Month 3", dateRange: "To Be Declared", startDate: new Date("2026-11-20"), endDate: new Date("2026-12-19T23:59:59") },
-  ];
   const fetchTasksAndSubmissions = async () => {
     try {
       const [tasksRes, submissionsRes] = await Promise.all([API.get("/ambassador/getTasks"),API.get("/ambassador/getMySubmissions"),]);
