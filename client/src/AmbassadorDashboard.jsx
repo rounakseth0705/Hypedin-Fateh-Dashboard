@@ -102,7 +102,7 @@ export default function AmbassadorDashboard() {
     {
       id: 3,
       title: "Month 3",
-      startDate: new Date("2026-03-02T00:00:00"),
+      startDate: new Date("2027-03-02T00:00:00"),
       endDate: new Date("2027-04-02T23:59:59"),
       dateRangeStr: "To Be Declared",
     },
